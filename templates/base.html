@@ -214,7 +214,9 @@
 
             <div class="page-content">
                 <div class="container-fluid">
-
+                    {% block content %}
+                    <!-- Default content or leave empty for specific pages to override -->
+                    {% endblock %}
                 </div>
                 <!-- container-fluid -->
             </div>
