@@ -24,7 +24,7 @@ def post_list(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    return render(request, 'posts/post_list.html', {'page_obj': page_obj})
+    return render(request, 'posts/list_post.html', {'page_obj': page_obj})
 
 
 def post_detail(request, post_id):
@@ -65,4 +65,4 @@ def post_detail(request, post_id):
     # lấy 4 bài tương tự
     related_posts = Post.objects.filter(post_type=post.post_type).exclude(id=post_id).order_by('-created_at')[:4]
     
-    return render(request, 'posts/post_detail.html', {'post': post, 'latest_posts': latest_posts, 'related_posts': related_posts})
+    return render(request, 'posts/detail_post.html', {'post': post, 'latest_posts': latest_posts, 'related_posts': related_posts})
