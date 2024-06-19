@@ -1,0 +1,50 @@
+
+{% extends "posts/base.html" %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+<article>
+    <h2>{{ post.title }}</h2>
+    <!-- Chia sẻ qua mạng xã hội -->
+    <div class="social-share">
+        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" target="_blank" class="btn btn-primary">
+            <i class="fab fa-facebook-f"></i> Share on Facebook
+        </a>
+        <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ post.loai_bai_viet }}" target="_blank" class="btn btn-info">
+            <i class="fab fa-twitter"></i> Share on Twitter
+        </a>
+    </div>
+    <p>{{ post.post_type }}</p>
+    <p>{{ post.content|safe }}</p> <!-- Sử dụng |safe để hiển thị HTML -->
+    <p><strong>Ngày tạo:</strong> {{ post.created_at }}</p>
+    <p><strong>Lượt xem:</strong> {{ post.views }}</p>
+    {% if post.image %}
+        <img src="{{ post.image.url }}" alt="Post Image" class="img-fluid">
+    {% endif %}
+    {% if post.source_url %}
+        <p><strong>Nguồn:</strong> <a href="{{ post.source_url }}" target="_blank">{{ post.source_url }}</a></p>
+    {% endif %}
+    <p><a href="{% url 'post_list' %}">Quay lại danh sách bài viết</a></p>
+</article>
+
+<!-- Đề xuất 4 bài viết mới nhất -->
+<div class="latest-posts">
+    <h3>Bài viết mới nhất</h3>
+    <ul>
+        {% for latest_post in latest_posts %}
+            <li><a href="{% url 'post_detail' latest_post.id %}">{{ latest_post.title }}</a></li>
+        {% endfor %}
+    </ul>
+</div>
+
+<!-- Đề xuất 4 bài viết có cùng loai_bai_viet -->
+<div class="related-posts">
+    <h3>Có thể bạn quan tâm</h3>
+    <ul>
+        {% for related_post in related_posts %}
+            <li><a href="{% url 'post_detail' related_post.id %}">{{ related_post.title }}</a></li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

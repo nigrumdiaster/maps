@@ -1,0 +1,6 @@
+geopy
+psycopg2
+django
+django-environ
+pillow
+django-taggit

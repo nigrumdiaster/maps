@@ -37,11 +37,14 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'django.contrib.admin',
+    'ckeditor',
+    'ckeditor_uploader',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'destination',
+    'posts',
     'django.contrib.staticfiles',
     'taggit',
 ]
@@ -135,3 +138,19 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Default primary key field type
+# https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
+
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+        'height': 300,
+        'width': 900,
+    },
+}
+CKEDITOR_UPLOAD_PATH = "uploads/"
+
+SESSION_COOKIE_AGE = 300  # 5 mins
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
