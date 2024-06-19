@@ -11,11 +11,13 @@
     <div class="post-list">
         {% for post in page_obj %}
             <div class="post-item">
-                {% if post.image %}
-                    <img src="{{ post.image.url }}" alt="{{ post.title }}" class="post-image">
-                {% else %}
-                    <img src="{% static 'images/default.jpg' %}" alt="No Image" class="post-image">
-                {% endif %}
+                <a href="{% url 'post_detail' post.id %}">
+                    {% if post.image %}
+                        <img src="{{ post.image.url }}" alt="{{ post.title }}" class="post-image">
+                    {% else %}
+                        <img src="{% static 'images/default.jpg' %}" alt="No Image" class="post-image">
+                    {% endif %}
+                </a>
                 <div class="post-content">
                     <h2><a href="{% url 'post_detail' post.id %}">{{ post.title }}</a></h2>
                     <p>Ngày tạo: {{ post.created_at }}</p>

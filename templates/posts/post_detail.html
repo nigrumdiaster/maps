@@ -19,8 +19,8 @@
     <p>{{ post.content|safe }}</p> <!-- Sử dụng |safe để hiển thị HTML -->
     <p><strong>Ngày tạo:</strong> {{ post.created_at }}</p>
     <p><strong>Lượt xem:</strong> {{ post.views }}</p>
-    {% if post.image %}
-        <img src="{{ post.image.url }}" alt="Post Image" class="img-fluid">
+    <!--{% if post.image %}
+        <img src="{{ post.image.url }}" alt="Post Image" class="img-fluid"> -->
     {% endif %}
     {% if post.source_url %}
         <p><strong>Nguồn:</strong> <a href="{{ post.source_url }}" target="_blank">{{ post.source_url }}</a></p>
