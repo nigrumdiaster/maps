@@ -51,7 +51,7 @@ def post_detail(request, post_id):
         except (ValueError, TypeError) as e:
             print(f"Error converting time: {e}")
             # Nếu có lỗi khi chuyển đổi thời gian, reset thời gian xem
-            post.views += 0
+            post.views += 1
             post.save()
             request.session[session_key] = now.strftime('%Y-%m-%d %H:%M:%S.%f')
     else:
