@@ -4,7 +4,6 @@ from taggit.managers import TaggableManager
 class Location(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
-    image = models.FileField(blank=True)
     tags = TaggableManager()
     created_at = models.DateTimeField(auto_now_add=True)
     address = models.CharField(max_length=255)

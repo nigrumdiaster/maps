@@ -4,7 +4,7 @@ from .models import Location, LocationImage
 class LocationForm(forms.ModelForm):
     class Meta:
         model = Location
-        fields = ['name', 'description', 'tags', 'image', 'address']
+        fields = ['name', 'description', 'tags', 'address']
 
 class LocationImageForm(forms.ModelForm):
     class Meta:
