@@ -50,7 +50,7 @@
   <div class="dropzone">
     <label for="locationTags" class="form-label">Hình ảnh</label>
     <div class="fallback">
-      <input name="file" type="file" multiple />
+      <input name="file" type="file" multiple="multiple" />
     </div>
     <div class="dz-message needsclick">
       <div class="mb-3">
@@ -59,7 +59,7 @@
       <h4>Thả ảnh tại đây hoặc nhấn để tải lên.</h4>
     </div>
   </div>
-  {% comment %} <ul class="list-unstyled mb-0" id="dropzone-preview">
+  <ul class="list-unstyled mb-0" id="dropzone-preview">
     <li class="mt-2" id="dropzone-preview-list">
       <!-- This is used as the file preview template -->
       <div class="border rounded">
@@ -87,7 +87,7 @@
         </div>
       </div>
     </li>
-  </ul> {% endcomment %}
+  </ul>
   <!-- end dropzon-preview -->
   <div class="text-end">
     <button type="submit" class="btn btn-primary">Thêm</button>
