@@ -4,5 +4,6 @@ from .views import Create_location
 
 urlpatterns = [
     path('create/', Create_location.as_view(), name='create_location'),
+    # path('list/', List_location.as_view(), name='list_location'),
     # Other URL patterns for your app
 ]

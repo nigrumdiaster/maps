@@ -5,3 +5,4 @@ destination/migrations
 media
 posts/__pycache__
 posts/migrations
+staticfiles
