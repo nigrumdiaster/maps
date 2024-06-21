@@ -20,7 +20,7 @@ class Create_location(View):
             location_description = request.POST.get('locationDescription')
             location_tags = request.POST.get('locationTags')
             location_address = request.POST.get('locationAddress')
-            uploaded_images = request.FILES.getlist('file')  # Adjusted to 'file[]' for Dropzone.js
+            uploaded_images = request.FILES.getlist('file')  
 
             # Use Geopy to geocode the location address
             geolocator = Nominatim(user_agent="destination")
