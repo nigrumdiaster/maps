@@ -4,8 +4,19 @@ from django.utils import timezone
 from .models import Post
 from .forms import PostForm
 from django.core.paginator import Paginator
+from django.urls import reverse
+from django.views.generic.edit import CreateView
+from django.contrib.messages.views import SuccessMessageMixin
 from django.views.decorators.csrf import csrf_exempt
 import datetime
+
+class CreatePost(SuccessMessageMixin, CreateView):
+    form_class = PostForm
+    model = Post
+    template_name = "posts/create_post.html"
+    success_message = "Added Succesfully"
+    def get_success_url(self):
+        return reverse('create_post')
 
 @csrf_exempt
 def create_post(request):
@@ -45,7 +56,7 @@ def create_post(request):
         return render(request, "posts/create_post.html", context)
 
 
-def post_list(request):
+def list_post(request):
     posts = Post.objects.all()
     paginator = Paginator(posts, 10)  # Hiển thị 10 bài viết trên mỗi trang
 
@@ -55,7 +66,7 @@ def post_list(request):
     return render(request, 'posts/list_post.html', {'page_obj': page_obj})
 
 
-def post_detail(request, post_id):
+def detail_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     session_key = f'post_{post_id}_viewed'
     
