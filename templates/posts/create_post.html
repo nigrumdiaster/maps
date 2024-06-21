@@ -14,12 +14,12 @@
 
     <form action="">
         <div class="mb-3">
-            <label for="title" class="form-label">Title</label>
-            <input type="text" class="form-control" id="title" name = "title" placeholder="Enter title">
+            <label for="postTitle" class="form-label">Title</label>
+            <input type="text" class="form-control" id="postTitle" name = "postTitle" placeholder="Enter title">
         </div>
         <div class="mb-3">
-            <label for="post_type" class="form-label">Post Type</label>
-            <select class="form-select" id="post_type" name = "post_type">
+            <label for="postType" class="form-label">Post Type</label>
+            <select class="form-select mb-3" id="postType" name = "postType">
                 <option selected>Choose...</option>
                 <option value="1">Tin Tức</option>
                 <option value="2">Lịch Sử</option>
@@ -27,16 +27,17 @@
             </select>
         </div><!--end col-->
         <div class="form-group">
-            <label for="{{ form.content.id_for_label }}">Content</label>
-            {{ form.content }}
+            <label for="postContent">Content</label>
+            <textarea class="form-control" id="postContent" rows="10" name="postContent">{{ form.content.value }}</textarea>
+            <div class="ckeditor-classic"></div>
         </div>
         <div class="mb-3">
-            <label for="source_url" class="form-label">Source URL</label>
-            <input type="url" class="form-control" id="source_url" name = "source_url" placeholder="Enter source url">
+            <label for="postSourceURL" class="form-label">Source URL</label>
+            <input type="url" class="form-control" id="postSourceURL" name = "postSourceURL" placeholder="Enter source url">
         </div>
         <div class="mb-3">
-            <label for="notes" class="form-label">Notes</label>
-            <textarea class="form-control" id="notes" rows="3" name = "notes" placeholder="Enter notes"></textarea>
+            <label for="postNotes" class="form-label">Notes</label>
+            <textarea class="form-control" id="postNotes" rows="3" name = "postNotes" placeholder="Enter notes"></textarea>
         </div>
 
         <div class="row">
@@ -51,7 +52,7 @@
 
                         <div class="dropzone">
                             <div class="fallback">
-                                <input name="image" type="file" multiple="multiple">
+                                <input class = "form-control" name="image" type="file" multiple="multiple">
                             </div>
                             <div class="dz-message needsclick">
                                 <div class="mb-3">

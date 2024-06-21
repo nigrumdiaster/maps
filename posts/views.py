@@ -4,17 +4,45 @@ from django.utils import timezone
 from .models import Post
 from .forms import PostForm
 from django.core.paginator import Paginator
+from django.views.decorators.csrf import csrf_exempt
 import datetime
 
+@csrf_exempt
 def create_post(request):
-    if request.method == 'POST':
-        form = PostForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('post_list')
-    else:
-        form = PostForm()
-    return render(request, 'posts/create_post.html', {'form': form})
+    if request.method == 'GET':
+        # Display the form for creating a post
+        return render(request, "posts/create_post.html")
+    
+    elif request.method == 'POST':
+        post_title = request.POST.get('postTitle')
+        type_post = request.POST.get('postType')
+        post_content = request.POST.get('postContent')
+        post_source_url = request.POST.get('postSourceURL')
+        post_notes = request.POST.get('postNotes')
+        post_views = request.POST.get('postViews', 0)  # Default to 0 if not provided
+        uploaded_images = request.FILES.getlist('file')
+        
+        # Tạo đối tượng Post mới và lưu vào cơ sở dữ liệu
+        new_post = Post(
+            title=post_title,
+            post_type=type_post,
+            content=post_content,
+            source_url=post_source_url,
+            notes=post_notes,
+            views=post_views,
+        )
+        new_post.save()
+
+        # Lưu từng hình ảnh vào cơ sở dữ liệu
+        for image in uploaded_images:
+            new_image = Post(post=new_post, image=image)
+            new_image.save()
+        
+        # Chuyển hướng người dùng đến trang tạo bài viết với thông báo thành công
+        context = {
+            'message': 'Post created successfully!'
+        }
+        return render(request, "posts/create_post.html", context)
 
 
 def post_list(request):
