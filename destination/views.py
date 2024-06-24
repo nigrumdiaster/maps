@@ -71,74 +71,15 @@ class List_location(View):
 
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
-        
-        return render(request, self.template_name, {'page_obj': page_obj})
+        data = {'page_obj': page_obj}
+
+        return render(request, self.template_name, data)
+    
+class Detail_location(View):
+    template_name = 'destination/detail_location.html'
+    def get(self, request):
+        return render(request, self.template_name)
 
 
 
-        # location = Location.objects.all().filter().order_by('-id')
-        # item_count = location.count()
-        # items_per_page = 10
-        # page_count = item_count // items_per_page + (1 if item_count % items_per_page > 0 else 0)
-        
-        # if(request.GET.get('trang') is not None):
-        #     try:
-        #         page = int(request.GET.get('trang'))
-        #         #vị trí bắt đầu trang
-        #         start_index = (page - 1) * items_per_page
-        #         #vị trí cuối trang
-        #         end_index = start_index + items_per_page
-        #         if page > page_count or page <= 0:
-        #             return render(request, template_error)
-        #         else:
-        #             pre_page = 1 if(page == 1) else page - 1
-        #             next_page = page_count if(page == page_count) else page + 1
-        #             tintuc = tintuc[int(start_index):int(end_index)]
-        #             number_page = [i for i in range(1, page_count + 1)]
-        #             data = {
-        #                 "tintuc": tintuc,
-        #                 "tintucmoi": tintucmoi,
-        #                 "chuyenmuc": chuyenmuc, 
-        #                 "banner": banner,
-        #                 'page_count': number_page, 
-        #                 "title": "Tin Tức", 
-        #                 "page": page, 
-        #                 "pre_page": pre_page, 
-        #                 "next_page": next_page, 
-        #                 "len_page_count": len(number_page)
-        #             }
-        #             return render(request, self.template_name, data)
-        #     except:
-        #         return render(request, template_error)
-        # elif (request.GET.get('s') is not None):
-        #     try:
-        #         tieude = request.GET.get('s')
-        #         tintuc = TinTuc.objects.all().filter(TieuDe__icontains=tieude).order_by('-id')
-        #         data = {
-        #             "tintuc": tintuc,
-        #             "tintucmoi": tintucmoi, 
-        #             "chuyenmuc": chuyenmuc, 
-        #             "banner": banner,
-        #             "title": "Tin Tức", 
-        #         }
-        #         return render(request, self.template_name, data)
-        #     except:
-        #         return render(request, template_error)
-        # else:
-        #     try:
-        #         tintuc = tintuc[0:8]
-        #         number_page = [i for i in range(1, page_count + 1)]
-        #         data = {
-        #             "tintuc": tintuc,
-        #             "tintucmoi": tintucmoi, 
-        #             "chuyenmuc": chuyenmuc, 
-        #             "banner": banner,
-        #             'page_count': number_page, 
-        #             "title": "Tin Tức", 
-        #             "page": 1,      
-        #             "len_page_count": len(number_page)
-        #         }
-        #         return render(request, self.template_name, data)
-        #     except:
-        #         return render(request, template_error)
 
