@@ -1,5 +1,5 @@
-maps/.env
-maps/__pycache__
+internpj/.env
+internpj/__pycache__
 destination/__pycache__
 destination/migrations
 media
