@@ -9,3 +9,6 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ['title', 'post_type', 'content', 'source_url', 'notes', 'image', 'views']
+        widgets = {
+            'content': CKEditorWidget(),
+        }

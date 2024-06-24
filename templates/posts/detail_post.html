@@ -25,7 +25,7 @@
     {% if post.source_url %}
         <p><strong>Nguồn:</strong> <a href="{{ post.source_url }}" target="_blank">{{ post.source_url }}</a></p>
     {% endif %}
-    <p><a href="{% url 'post_list' %}">Quay lại danh sách bài viết</a></p>
+    <p><a href="{% url 'list_post' %}">Quay lại danh sách bài viết</a></p>
 </article>
 
 <!-- Đề xuất 4 bài viết mới nhất -->
@@ -33,7 +33,7 @@
     <h3>Bài viết mới nhất</h3>
     <ul>
         {% for latest_post in latest_posts %}
-            <li><a href="{% url 'post_detail' latest_post.id %}">{{ latest_post.title }}</a></li>
+            <li><a href="{% url 'detail_post' latest_post.id %}">{{ latest_post.title }}</a></li>
         {% endfor %}
     </ul>
 </div>
@@ -43,7 +43,7 @@
     <h3>Có thể bạn quan tâm</h3>
     <ul>
         {% for related_post in related_posts %}
-            <li><a href="{% url 'post_detail' related_post.id %}">{{ related_post.title }}</a></li>
+            <li><a href="{% url 'detail_post' related_post.id %}">{{ related_post.title }}</a></li>
         {% endfor %}
     </ul>
 </div>
