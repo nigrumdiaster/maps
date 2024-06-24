@@ -1,11 +1,9 @@
 from django.contrib import admin
 from .models import Location, LocationImage
-from .forms import LocationImageForm
 
 class LocationImageInline(admin.TabularInline):
     model = LocationImage
     extra = 1
-    form = LocationImageForm
 
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
@@ -22,10 +20,9 @@ class LocationAdmin(admin.ModelAdmin):
     def display_tags(self, obj):
         return ", ".join(tag.name for tag in obj.tags.all())
 
-    display_tags.short_description = 'Tags'  # Đặt tên cho cột hiển thị tag
+    display_tags.short_description = 'Tags'  # Set column header for displayed tags
 
 @admin.register(LocationImage)
 class LocationImageAdmin(admin.ModelAdmin):
     list_display = ('location', 'images')
     search_fields = ('location__name',)
-

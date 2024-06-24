@@ -79,6 +79,17 @@
       rel="stylesheet"
       href="{% static 'assets/libs/filepond-plugin-image-preview/filepond-plugin-image-preview.min.css' %}"
     />
+    <!-- nouisliderribute css -->
+    <link
+      rel="stylesheet"
+      href="{% static 'assets/libs/nouislider/nouislider.min.css' %}"
+    />
+
+    <!-- gridjs css -->
+    <link
+      rel="stylesheet"
+      href="{% static 'assets/libs/gridjs/theme/mermaid.min.css' %}"
+    />
   </head>
 
   <body>
@@ -362,7 +373,7 @@
                     </li>
                     <li class="nav-item">
                       <a
-                        href="dashboard-crm.html"
+                        href="{% url 'list_location' %}"
                         class="nav-link"
                         data-key="t-crm"
                       >
@@ -1692,28 +1703,26 @@
       </div>
     </div>
 
-   <!-- JAVASCRIPT -->
-   <script src="{% static 'assets/libs/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-   <script src="{% static 'assets/libs/simplebar/simplebar.min.js' %}"></script>
-   <script src="{% static 'assets/libs/node-waves/waves.min.js' %}"></script>
-   <script src="{% static 'assets/libs/feather-icons/feather.min.js' %}"></script>
-   <script src="{% static 'assets/js/pages/plugins/lord-icon-2.1.0.js' %}"></script>
-   <script src="{% static 'assets/js/plugins.js' %}" defer></script>
-   
-   <!-- dropzone min -->
-   <script src="{% static 'assets/libs/dropzone/dropzone-min.js' %}"></script>
-   
-   <!-- filepond js -->
-   <script src="{% static 'assets/libs/filepond/filepond.min.js' %}"></script>
-   <script src="{% static 'assets/libs/filepond-plugin-image-preview/filepond-plugin-image-preview.min.js' %}"></script>
-   <script src="{% static 'assets/libs/filepond-plugin-file-validate-size/filepond-plugin-file-validate-size.min.js' %}"></script>
-   <script src="{% static 'assets/libs/filepond-plugin-image-exif-orientation/filepond-plugin-image-exif-orientation.min.js' %}"></script>
-   <script src="{% static 'assets/libs/filepond-plugin-file-encode/filepond-plugin-file-encode.min.js' %}"></script>
-   
-   <script src="{% static 'assets/js/pages/form-file-upload.init.js' %}"></script>
-   
-   <script src="{% static 'assets/js/app.js' %}"></script>
+    <!-- JAVASCRIPT -->
+    <script src="{% static 'assets/libs/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'assets/libs/simplebar/simplebar.min.js' %}"></script>
+    <script src="{% static 'assets/libs/node-waves/waves.min.js' %}"></script>
+    <script src="{% static 'assets/libs/feather-icons/feather.min.js' %}"></script>
+    <script src="{% static 'assets/js/pages/plugins/lord-icon-2.1.0.js' %}"></script>
+    <script src="{% static 'assets/js/plugins.js' %}" defer></script>
 
+    <!-- dropzone min -->
+    <script src="{% static 'assets/libs/dropzone/dropzone-min.js' %}"></script>
 
+    <!-- filepond js -->
+    <script src="{% static 'assets/libs/filepond/filepond.min.js' %}"></script>
+    <script src="{% static 'assets/libs/filepond-plugin-image-preview/filepond-plugin-image-preview.min.js' %}"></script>
+    <script src="{% static 'assets/libs/filepond-plugin-file-validate-size/filepond-plugin-file-validate-size.min.js' %}"></script>
+    <script src="{% static 'assets/libs/filepond-plugin-image-exif-orientation/filepond-plugin-image-exif-orientation.min.js' %}"></script>
+    <script src="{% static 'assets/libs/filepond-plugin-file-encode/filepond-plugin-file-encode.min.js' %}"></script>
+
+    <script src="{% static 'assets/js/pages/form-file-upload.init.js' %}"></script>
+    <!-- App js -->
+    <script src="{% static 'assets/js/app.js' %}"></script>
   </body>
 </html>
