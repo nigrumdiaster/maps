@@ -17,12 +17,16 @@
                                     </div>
                                     <div class="vr"></div>
                                     <div class="text-muted">
-                                        Ngày tạo : <span class="fw-medium" id="create-date">{{ location.created_at|date:'F d, Y' }}</span>
+                                        Ngày tạo : <span class="fw-medium" id="create-date">{{ location.created_at|date:'d/m/Y' }}</span>
                                     </div>
                                     <div class="vr"></div>
                                     <div class="text-muted">
                                         <span id="ticket-client">{{ location.tags.all|join:', ' }}</span>
                                     </div>
+                                    <div class="text-muted">
+                                        Lượt xem : <span class="fw-medium" id="create-date">{{ location.views }}</span>
+                                    </div>
+                                    <div class="vr"></div>
                                     <div class="badge rounded-pill bg-info fs-12" id="ticket-status">New</div>
                                     <div class="badge rounded-pill bg-danger fs-12" id="ticket-priority">High</div>
                                 </div>
