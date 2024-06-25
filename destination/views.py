@@ -6,6 +6,7 @@ from taggit.utils import parse_tags
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
 
+
 template_error = '404error.html'
 class Create_location(View):
     template_name = 'destination/create_location.html'
@@ -75,11 +76,49 @@ class List_location(View):
 
         return render(request, self.template_name, data)
     
+
+
+# class Detail_location(View):
+#     template_name = 'destination/detail_location.html'
+#     def get(self, request, pk):
+#         location = get_object_or_404(Location, pk=pk)
+#         images = location.images.all()  # Get all related images
+#         return render(request, self.template_name, {'location': location, 'images': images})
+
+from django.views import View
+from django.shortcuts import render, get_object_or_404
+from django.utils import timezone
+from .models import Location
+
 class Detail_location(View):
     template_name = 'destination/detail_location.html'
+
     def get(self, request, pk):
+        # Retrieve the location object
         location = get_object_or_404(Location, pk=pk)
-        images = location.images.all()  # Get all related images
+
+        # Check if 'last_visit' exists in the session and calculate time difference
+        last_visit_str = request.session.get('last_visit')
+        if last_visit_str:
+            last_visit = timezone.datetime.strptime(last_visit_str, '%Y-%m-%dT%H:%M:%S.%f%z')
+            time_difference = timezone.now() - last_visit
+            # If time difference is more than 5 minutes, increment view count
+            if time_difference.total_seconds() > 300:  # 300 seconds = 5 minutes
+                location.views += 1
+                location.save()
+                # Update last_visit time in session
+                request.session['last_visit'] = timezone.now().isoformat()
+        else:
+            # Set last_visit time in session
+            request.session['last_visit'] = timezone.now().isoformat()
+            # Increment view count for the first visit
+            location.views += 1
+            location.save()
+
+        # Retrieve all related images
+        images = location.images.all()
+
+        # Render the template with location and images
         return render(request, self.template_name, {'location': location, 'images': images})
 
 
