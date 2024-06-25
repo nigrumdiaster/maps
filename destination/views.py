@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from geopy.geocoders import Nominatim
 from .models import Location, LocationImage
 from django.views import View
@@ -77,8 +77,10 @@ class List_location(View):
     
 class Detail_location(View):
     template_name = 'destination/detail_location.html'
-    def get(self, request):
-        return render(request, self.template_name)
+    def get(self, request, pk):
+        location = get_object_or_404(Location, pk=pk)
+        images = location.images.all()  # Get all related images
+        return render(request, self.template_name, {'location': location, 'images': images})
 
 
 

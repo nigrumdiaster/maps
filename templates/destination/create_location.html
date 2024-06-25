@@ -1,130 +1,95 @@
-{% extends "base.html" %} {% load static %} {% block content %}
-<form
-  action="{% url 'create_location' %}"
-  method="post"
-  enctype="multipart/form-data"
->
-  {% csrf_token %}
-  <div class="mb-3">
-    <label for="locationName" class="form-label">Tên điểm đến</label>
-    <input
-      type="text"
-      class="form-control"
-      id="locationName"
-      name="locationName"
-      placeholder="Nhập tên điểm đến"
-    />
-  </div>
-  <div class="mb-3">
-    <label for="locationDescription" class="form-label">Mô tả</label>
-    <textarea
-      class="form-control"
-      id="locationDescription"
-      name="locationDescription"
-      rows="3"
-      placeholder="Nhập mô tả điểm đến"
-    ></textarea>
-  </div>
-  <div class="mb-3">
-    <label for="locationTags" class="form-label"
-      >Tag (Ngăn cách bởi dấu phẩy)</label
-    >
-    <input
-      type="text"
-      class="form-control"
-      id="locationTags"
-      name="locationTags"
-      placeholder="Nhập tag"
-    />
-  </div>
-  <div class="mb-3">
-    <label for="locationAddress" class="form-label">Địa chỉ</label>
-    <input
-      type="text"
-      class="form-control"
-      id="locationAddress"
-      name="locationAddress"
-      placeholder="Nhập địa chỉ"
-    />
-  </div>
-  <div class="dropzone">
-    <label for="locationTags" class="form-label">Hình ảnh</label>
-    <div class="fallback">
-      <input name="file" type="file" multiple="multiple" />
+{% extends 'base.html' %} {% load static %} {% block content %}
+  <form action="{% url 'create_location' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label for="locationName" class="form-label">Tên điểm đến</label>
+      <input type="text" class="form-control" id="locationName" name="locationName" placeholder="Nhập tên điểm đến" />
     </div>
-    <div class="dz-message needsclick">
-      <div class="mb-3">
-        <i class="display-4 text-muted ri-upload-cloud-2-fill"></i>
+    <div class="mb-3">
+      <label for="locationDescription" class="form-label">Mô tả</label>
+      <textarea class="form-control" id="locationDescription" name="locationDescription" rows="3" placeholder="Nhập mô tả điểm đến"></textarea>
+    </div>
+    <div class="mb-3">
+      <label for="locationTags" class="form-label">Tag (Ngăn cách bởi dấu phẩy)</label>
+      <input type="text" class="form-control" id="locationTags" name="locationTags" placeholder="Nhập tag" />
+    </div>
+    <div class="mb-3">
+      <label for="locationAddress" class="form-label">Địa chỉ</label>
+      <input type="text" class="form-control" id="locationAddress" name="locationAddress" placeholder="Nhập địa chỉ" />
+    </div>
+    <div class="dropzone">
+      <label for="locationTags" class="form-label">Hình ảnh</label>
+      <div class="fallback">
+        <input name="file" type="file" multiple="multiple" />
       </div>
-      <h4>Thả ảnh tại đây hoặc nhấn để tải lên.</h4>
+      <div class="dz-message needsclick">
+        <div class="mb-3">
+          <i class="display-4 text-muted ri-upload-cloud-2-fill"></i>
+        </div>
+        <h4>Thả ảnh tại đây hoặc nhấn để tải lên.</h4>
+      </div>
     </div>
-  </div>
-  {% comment %} <ul class="list-unstyled mb-0" id="dropzone-preview">
-    <li class="mt-2" id="dropzone-preview-list">
-      <!-- This is used as the file preview template -->
-      <div class="border rounded">
-        <div class="d-flex p-2">
-          <div class="flex-shrink-0 me-3">
-            <div class="avatar-sm bg-light rounded">
-              <img
-                data-dz-thumbnail
-                class="img-fluid rounded d-block"
-                src="{% static 'assets/images/new-document.png' %}"
-                alt="Dropzone-Image"
-              />
+    {% comment %} <ul class="list-unstyled mb-0" id="dropzone-preview">
+      <li class="mt-2" id="dropzone-preview-list">
+        <!-- This is used as the file preview template -->
+        <div class="border rounded">
+          <div class="d-flex p-2">
+            <div class="flex-shrink-0 me-3">
+              <div class="avatar-sm bg-light rounded">
+                <img data-dz-thumbnail class="img-fluid rounded d-block" src="{% static 'assets/images/new-document.png' %}" alt="Dropzone-Image" />
+              </div>
             </div>
-          </div>
-          <div class="flex-grow-1">
-            <div class="pt-1">
-              <h5 class="fs-14 mb-1" data-dz-name>&nbsp;</h5>
-              <p class="fs-13 text-muted mb-0" data-dz-size></p>
-              <strong class="error text-danger" data-dz-errormessage></strong>
+            <div class="flex-grow-1">
+              <div class="pt-1">
+                <h5 class="fs-14 mb-1" data-dz-name>&nbsp;</h5>
+                <p class="fs-13 text-muted mb-0" data-dz-size></p>
+                <strong class="error text-danger" data-dz-errormessage></strong>
+              </div>
             </div>
-          </div>
-          <div class="flex-shrink-0 ms-3">
-            <button data-dz-remove class="btn btn-sm btn-danger">Delete</button>
+            <div class="flex-shrink-0 ms-3">
+              <button data-dz-remove class="btn btn-sm btn-danger">Delete</button>
+            </div>
           </div>
         </div>
-      </div>
-    </li>
-  </ul> {% endcomment %}
-  <!-- end dropzon-preview -->
-  <div class="text-end">
-    <button type="submit" class="btn btn-primary">Thêm</button>
-  </div>
-</form>
+      </li>
+    </ul> {% endcomment %}
+    <!-- end dropzon-preview -->
+    <br /><br />
+    <div class="text-end">
+      <button type="submit" class="btn btn-primary">Thêm</button>
+    </div>
+  </form>
+  <br /><br /><br /><br /><br /><br />
+  <!-- Include Dropzone JS -->
+  <script src="{% static 'assets/libs/dropzone/dropzone-min.js' %}"></script>
 
-<!-- Include Dropzone JS -->
-<script src="{% static 'assets/libs/dropzone/dropzone-min.js' %}"></script>
+  {% comment %}
+  <!-- Script for Dropzone options -->
+  <script>
+    Dropzone.options.myDropzone = {
+      paramName: 'file',
+      maxFilesize: 3, // MB
+      acceptedFiles: 'image/*',
+      init: function () {
+        this.on('success', function (file, response) {
+          // Handle the success response from the server
+          console.log(response)
+        })
+        this.on('error', function (file, response) {
+          // Handle the error response from the server
+          console.error(response)
+        })
+      }
+    }
+  </script>
+  {% endcomment %}
 
-{% comment %}
-<!-- Script for Dropzone options -->
-<script>
-  Dropzone.options.myDropzone = {
-    paramName: "file",
-    maxFilesize: 3, // MB
-    acceptedFiles: "image/*",
-    init: function () {
-      this.on("success", function (file, response) {
-        // Handle the success response from the server
-        console.log(response);
-      });
-      this.on("error", function (file, response) {
-        // Handle the error response from the server
-        console.error(response);
-      });
-    },
-  };
-</script>
-{% endcomment %}
-
-<!-- Other JavaScript files -->
-<script src="{% static 'assets/libs/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-<script src="{% static 'assets/libs/simplebar/simplebar.min.js' %}"></script>
-<script src="{% static 'assets/libs/node-waves/waves.min.js' %}"></script>
-<script src="{% static 'assets/libs/feather-icons/feather.min.js' %}"></script>
-<script src="{% static 'assets/js/pages/plugins/lord-icon-2.1.0.js' %}"></script>
-<script src="{% static 'assets/js/plugins.js' %}"></script>
-<script src="{% static 'assets/js/app.js' %}"></script>
-
-{% endblock content %}
+  <!-- Other JavaScript files -->
+  <script src="{% static 'assets/libs/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'assets/libs/simplebar/simplebar.min.js' %}"></script>
+  <script src="{% static 'assets/libs/node-waves/waves.min.js' %}"></script>
+  <script src="{% static 'assets/libs/feather-icons/feather.min.js' %}"></script>
+  <script src="{% static 'assets/js/pages/plugins/lord-icon-2.1.0.js' %}"></script>
+  <script src="{% static 'assets/js/plugins.js' %}"></script>
+  <script src="{% static 'assets/js/app.js' %}"></script>
+{% endblock %}

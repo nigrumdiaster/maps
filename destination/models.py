@@ -15,7 +15,7 @@ class Location(models.Model):
         return self.name
 
 class LocationImage(models.Model):
-    location = models.ForeignKey(Location, default=None, on_delete=models.CASCADE)
+    location = models.ForeignKey(Location, related_name='images', on_delete=models.CASCADE)
     images = models.FileField(upload_to = 'images/')
 
     def __str__(self):

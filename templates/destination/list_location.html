@@ -32,7 +32,7 @@
                       <td>{{ location.created_at|date:'F d, Y' }}</td>
                       <td>{{ location.views }}</td>
                       <td>
-                        <a href="javascript:void(0);" class="link-success">Chi Tiết <i class="ri-arrow-right-line align-middle"></i></a>
+                        <a href="{% url 'location_detail' location.id %}" class="link-success">Chi Tiết <i class="ri-arrow-right-line align-middle"></i></a>
                       </td>
                     </tr>
                   {% endfor %}
