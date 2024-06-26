@@ -2,71 +2,76 @@
 {% load static %}
 
 {% block content %}
-<div class="container-fluid">
+  <div class="container-fluid">
     <div class="row">
-        <div class="col-lg-12">
-            <div class="card mt-n4 mx-n4 mb-n5">
-                <div class="bg-soft-warning">
-                    <div class="card-body pb-4 mb-5">
-                        <div class="row align-items-center">
-                            <div class="col-md">
-                                <h4 class="fw-semibold" id="ticket-title">{{ location.name }}</h4>
-                                <div class="hstack gap-3 flex-wrap">
-                                    <div class="text-muted">
-                                        <span id="ticket-client">{{ location.address }}</span>
-                                    </div>
-                                    <div class="vr"></div>
-                                    <div class="text-muted">
-                                        Ngày tạo : <span class="fw-medium" id="create-date">{{ location.created_at|date:'d/m/Y' }}</span>
-                                    </div>
-                                    <div class="vr"></div>
-                                    <div class="text-muted">
-                                        <span id="ticket-client">{{ location.tags.all|join:', ' }}</span>
-                                    </div>
-                                    <div class="text-muted">
-                                        Lượt xem : <span class="fw-medium" id="create-date">{{ location.views }}</span>
-                                    </div>
-                                    <div class="vr"></div>
-                                    <div class="badge rounded-pill bg-info fs-12" id="ticket-status">New</div>
-                                    <div class="badge rounded-pill bg-danger fs-12" id="ticket-priority">High</div>
-                                </div>
-                            </div>
-                        </div>
+      <div class="col-lg-12">
+        <div class="card mt-n4 mx-n4 mb-n5">
+          <div class="bg-soft-warning">
+            <div class="card-body pb-4 mb-5">
+              <div class="row align-items-center">
+                <div class="col-md">
+                  <h4 class="fw-semibold" id="ticket-title">{{ location.name }}</h4>
+                  <div class="hstack gap-3 flex-wrap">
+                    <div class="text-muted">
+                      <span id="ticket-client">{{ location.address }}</span>
                     </div>
+                    <div class="vr"></div>
+                    <div class="text-muted">
+                      Ngày tạo : <span class="fw-medium" id="create-date">{{ location.created_at|date:'d/m/Y' }}</span>
+                    </div>
+                    <div class="vr"></div>
+                    <div class="text-muted">
+                      <span id="ticket-client">{{ location.tags.all|join:', ' }}</span>
+                    </div>
+                    <div class="text-muted">
+                      Lượt xem : <span class="fw-medium" id="create-date">{{ location.views }}</span>
+                    </div>
+                    <div class="vr"></div>
+                  </div>
                 </div>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
 
     <div class="row">
-        <div class="col-xxl-9">
-            <div class="card">
-                <div class="card-body p-4">
-                    <h6 class="fw-semibold text-uppercase mb-3">Mô Tả</h6>
-                    <p class="text-muted">{{ location.description }}</p>
-                    <h6 class="fw-semibold text-uppercase mb-3">Hình Ảnh</h6>
+      <div class="col-xxl-9">
+        <div class="card">
+          <div class="card-body p-4">
+            <h6 class="fw-semibold text-uppercase mb-3">Mô Tả</h6>
+            <p class="text-muted">{{ location.description }}</p>
+            <h6 class="fw-semibold text-uppercase mb-3">Hình Ảnh</h6>
 
-                    <!-- Carousel -->
-                    <div id="carouselExampleInterval" class="carousel slide" data-bs-ride="carousel">
-                        <div class="carousel-inner">
-                            {% for image in images %}
-                            <div class="carousel-item {% if forloop.first %}active{% endif %}" data-bs-interval="10000">
-                                <img style='height: 500px; width: 100%; object-fit: contain' src="{{ image.images.url }}" class="d-block w-100" alt="Image for {{ location.name }}">
-                            </div>
-                            {% endfor %}
-                        </div>
-                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Previous</span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="visually-hidden">Next</span>
-                        </button>
-                    </div>
-                </div>
+            <!-- Carousel -->
+            <div id="carouselExampleInterval" class="carousel slide" data-bs-ride="carousel">
+              <div class="carousel-inner">
+                {% for image in images %}
+                  <div class="carousel-item {% if forloop.first %}active{% endif %}" data-bs-interval="10000">
+                    <img style="height: 500px; width: 100%; object-fit: contain" src="{{ image.images.url }}" class="d-block w-100" alt="Image for {{ location.name }}" />
+                  </div>
+                {% endfor %}
+              </div>
+              <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+              </button>
             </div>
+            <div class="row mt-3">
+              <div class="text-end">
+                <a href="{% url 'show_maps' %}?lat={{ location.latitude }}&lng={{ location.longitude }}" class="btn btn-primary">Xem trên bản đồ</a>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
-</div>
+
+    <!-- Button to view on map -->
+  </div>
 {% endblock %}

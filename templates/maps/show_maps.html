@@ -1,92 +1,145 @@
-{% extends 'base.html' %} {% load static %} {% block content %}
-<div class="row">
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+  <div class="row">
     <div class="col-xl-3 col-lg-4">
-        <div class="card">
-            <div class="card-header">
-                <div class="d-flex mb-3">
-                    <div class="flex-grow-1">
-                        <h5 class="fs-16">Điểm đến</h5>
-                    </div>
-                </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="d-flex mb-3">
+            <div class="flex-grow-1">
+              <h5 class="fs-16">Điểm đến</h5>
             </div>
-
-            <div class="card-body">
-                <div class="live-preview">
-                  <div class="table-responsive">
-                    <table class="table align-middle table-nowrap mb-0">
-                      <thead>
-                        <tr>
-                          <th scope="col">Tên</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {% for location in page_obj %}
-                          <tr>
-                            <th scope="row">
-                              <a href="#" class="fw-medium">{{ location.name }}</a>
-                            </th>
-                          </tr>
-                        {% endfor %}
-                      </tbody>
-                    </table>
-                  </div>
-                  <br />
-                  <div class="d-flex justify-content-end">
-                    <div class="pagination-wrap hstack gap-2">
-                      {% if page_obj.has_previous %}
-                        <a class="page-item pagination-prev" href="?page={{ page_obj.previous_page_number }}">Trước</a>
-                      {% else %}
-                        <a class="page-item pagination-prev disabled" href="#">Trước</a>
-                      {% endif %}
-      
-                      <ul class="pagination listjs-pagination mb-0">
-                        {% for num in page_obj.paginator.page_range %}
-                          {% if page_obj.number == num %}
-                            <li class="page-item active">
-                              <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-                            </li>
-                          {% else %}
-                            <li class="page-item">
-                              <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-                            </li>
-                          {% endif %}
-                        {% endfor %}
-                      </ul>
-      
-                      {% if page_obj.has_next %}
-                        <a class="page-item pagination-next" href="?page={{ page_obj.next_page_number }}">Sau</a>
-                      {% else %}
-                        <a class="page-item pagination-next disabled" href="#">Sau</a>
-                      {% endif %}
-                    </div>
-                  </div>
-                </div>
-              </div>
+          </div>
         </div>
-        <!-- end card -->
+
+        <div class="card-body">
+          <div class="live-preview">
+            <div class="table-responsive">
+              <table class="table align-middle table-nowrap mb-0">
+                <thead>
+                  <tr>
+                    <th scope="col">Tên</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for location in page_obj %}
+                    <tr>
+                      <th scope="row">
+                        <a href="{% url 'show_maps' %}?lat={{ location.latitude }}&lng={{ location.longitude }}" class="fw-medium">{{ location.name }}</a>
+                      </th>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+            <br />
+            <div class="d-flex justify-content-end">
+              <div class="pagination-wrap hstack gap-2">
+                {% if page_obj.has_previous %}
+                  <a class="page-item pagination-prev" href="?page={{ page_obj.previous_page_number }}">Trước</a>
+                {% else %}
+                  <a class="page-item pagination-prev disabled" href="#">Trước</a>
+                {% endif %}
+
+                <ul class="pagination listjs-pagination mb-0">
+                  {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                      <li class="page-item active">
+                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                      </li>
+                    {% else %}
+                      <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                      </li>
+                    {% endif %}
+                  {% endfor %}
+                </ul>
+
+                {% if page_obj.has_next %}
+                  <a class="page-item pagination-next" href="?page={{ page_obj.next_page_number }}">Sau</a>
+                {% else %}
+                  <a class="page-item pagination-next disabled" href="#">Sau</a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- end card -->
     </div>
     <!-- end col -->
 
     <div class="col-xl-9 col-lg-8">
-        <div>
-            <div class="card">
-                <div class="card-header border-0">
-                    <div class="row g-4">
-                        <div class="col-sm-auto">
-                            <div>
-                                <h5 class="fs-16">Bản đồ</h5>
-                            </div>
-                        </div>
-                    </div>
+      <div>
+        <div class="card">
+          <div class="card-header border-0">
+            <div class="row g-4">
+              <div class="col-sm-auto">
+                <div>
+                  <h5 class="fs-16">Bản đồ</h5>
                 </div>
-
-           
+              </div>
             </div>
-            <!-- end card -->
+          </div>
+          <div id="map" style="height: 500px; width: 100%;"></div>
         </div>
+        <!-- end card -->
+      </div>
     </div>
     <!-- end col -->
-</div>
+  </div>
 
-
-{% endblock content %}
+  <script>
+    // Initialize the map, setting the default view to Vietnam
+    var map = L.map('map').setView([14.0583, 108.2772], 6) // Coordinates of Vietnam with zoom level 6
+    
+    // Add Google Maps base layer
+    var googleStreets = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+      maxZoom: 20,
+      subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+    }).addTo(map)
+    
+    // Add Google Satellite base layer
+    var googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+      maxZoom: 20,
+      subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+    })
+    
+    // Base maps object for layer control
+    var baseMaps = {
+      'Street Map': googleStreets,
+      Satellite: googleSat
+    }
+    
+    // Add base maps control to the map
+    L.control.layers(baseMaps).addTo(map)
+    
+    // Get query parameters for latitude and longitude
+    const urlParams = new URLSearchParams(window.location.search)
+    const lat = parseFloat(urlParams.get('lat'))
+    const lng = parseFloat(urlParams.get('lng'))
+    
+    // If latitude and longitude are provided, fly to that location
+    if (!isNaN(lat) && !isNaN(lng)) {
+      map.setView([lat, lng], 15) // Fly to the specified location with zoom level 15
+    }
+    
+    // Locations data from Django view
+    var locations = JSON.parse('{{ locations_json|escapejs }}')
+    
+    // Add markers for each location
+    locations.forEach(function (location) {
+      L.marker([location.latitude, location.longitude]).bindPopup(location.name).addTo(map)
+    })
+    
+    // Event listener for location links
+    document.querySelectorAll('.location-link').forEach(function (link) {
+        link.addEventListener('click', function (event) {
+            event.preventDefault();
+            var lat = parseFloat(this.dataset.lat);
+            var lng = parseFloat(this.dataset.lng);
+            map.flyTo([lat, lng], 15);
+        });
+    });
+  </script>
+{% endblock %}
