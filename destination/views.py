@@ -68,7 +68,7 @@ class List_location(View):
     template_name = 'destination/list_location.html'
     def get(self, request):
         try:
-            locations = Location.objects.all()
+            locations = Location.objects.all().order_by('-created_at')
             paginator = Paginator(locations, 10)  # Show 10 locations per page
 
             page_number = request.GET.get('page')
