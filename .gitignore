@@ -6,3 +6,5 @@ media
 posts/__pycache__
 posts/migrations
 staticfiles
+maps/migrations
+maps/__pycache__

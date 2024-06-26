@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'destination',
     'posts',
+    'maps',
     'django.contrib.staticfiles',
     'taggit',
 ]
