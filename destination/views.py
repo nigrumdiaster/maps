@@ -7,6 +7,17 @@ from taggit.utils import parse_tags
 from geopy.geocoders import Nominatim
 
 from .models import Location, LocationImage
+from .utils import get_location_from_address
+
+
+from pathlib import Path
+import environ
+import os
+
+
+env = environ.Env()
+environ.Env.read_env()
+
 
 template_error = '404error.html'
 class Create_location(View):
@@ -23,17 +34,12 @@ class Create_location(View):
             location_tags = request.POST.get('locationTags')
             location_address = request.POST.get('locationAddress')
             uploaded_images = request.FILES.getlist('file')  
+            
+            bing_maps_key = env("BING_MAP_KEY")
 
-            # Use Geopy to geocode the location address
-            geolocator = Nominatim(user_agent="destination")
-            location = geolocator.geocode(location_address, timeout=10000)
+            location_latitude, location_longitude = get_location_from_address(location_address, bing_maps_key)
 
-            if location:
-                location_latitude = location.latitude
-                location_longitude = location.longitude
-            else:
-                location_latitude = None
-                location_longitude = None
+          
 
             # Create a new Location object and save it
             new_location = Location(

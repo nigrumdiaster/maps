@@ -5,3 +5,5 @@ django-environ
 pillow
 django-taggit
 django-ckeditor
+unidecode
+requests
