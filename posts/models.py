@@ -12,7 +12,7 @@ class Post(models.Model):
         ('History', 'Lịch sử'),
     ]
 
-    title = models.CharField(max_length=100, default=' ')
+    title = models.CharField(max_length=255, default=' ')
     post_type = models.CharField(max_length=50, choices=POST_TYPE_CHOICES)
     content = RichTextField()
     source_url = models.URLField(blank=True, null=True)

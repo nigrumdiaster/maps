@@ -28,8 +28,10 @@
                 </div>
                 <div class="col-md-8">
                     <div class="card-body">
-                        <h5 class="card-title mb-2"><a href="{% url 'detail_post' post.id %}">{{ post.title }}</a></h5>
-                        <p class="card-text text-muted mb-0">{{ post.notes }}</p>
+                        <h5 class="card-title mb-2" style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; max-height: 3em; line-height: 1.5em; min-height: 3em;">
+                            <a href="{% url 'detail_post' post.id %}">{{ post.title }}</a>
+                        </h5>
+                        <p class="card-text text-muted mb-0" style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; max-height: 3em; line-height: 1.5em; min-height: 3em;">{{ post.notes }}</p>
                     </div>
                     <div class="card-footer">
                         <p class="card-text"><small class="text-muted">Last updated {{ post.created_at|timesince }} ago</small></p>
