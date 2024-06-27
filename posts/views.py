@@ -46,11 +46,12 @@ def create_post(request):
         new_post.save()
         
         # Redirect user to the create post page with a success message
-        context = {
-            'message': 'Post created successfully!'
-        }
-        return render(request, "posts/create_post.html", context)
-
+        success = {
+                'success': 'Tạo bài viết thành công!'
+            }
+        return render(request, "posts/create_post.html", success)
+        
+        
 
 def list_post(request):
     posts = Post.objects.all().order_by('-created_at')
