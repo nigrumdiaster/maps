@@ -50,12 +50,13 @@
         <div class="col-xxl-9">
             <div class="card">
                 <div class="card-body p-4">
+                    <img style="height: 100px; width: 100%; object-fit: contain" class="rounded-start img-fluid h-100 object-cover" src="{{ post.image.url }}" alt="{{ post.title }}">
                     <h6 class="fw-semibold text-uppercase mb-3">{{ post.notes}}</h6>
-                    {% for image in images %}
+                    {% comment %} {% for image in images %}
                     <div class="carousel-item {% if forloop.first %}active{% endif %}" data-bs-interval="10000">
-                        <img style="height: 100px; width: 100%; object-fit: contain" src="{{ image.images.url }}" class="d-block w-100" alt="Image for {{ post.title }}" />
+                        <img style="height: 100px; width: 100%; object-fit: contain" src="{{ post.image.url }}" class="d-block w-100" alt="Image for {{ post.title }}" />
                     </div>
-                    {% endfor %}
+                    {% endfor %} {% endcomment %}
                     
                     <p>{{ post.content|safe }}</p>
 
