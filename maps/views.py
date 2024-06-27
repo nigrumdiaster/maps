@@ -24,6 +24,7 @@ class Show_maps(View):
                 image = location.images.first()
                 locations_list.append({
                     'name': location.name,
+                    'address': location.address,
                     'latitude': location.latitude,
                     'longitude': location.longitude,
                     'image': image.images.url if image else None  # Assuming 'image' has a 'url' attribute

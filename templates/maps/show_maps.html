@@ -135,7 +135,9 @@
         popupAnchor: [0, -32] // Position of the popup relative to marker's anchor
       })
     
-      L.marker([location.latitude, location.longitude], { icon: customIcon }).bindPopup(location.name).addTo(map)
+      L.marker([location.latitude, location.longitude], { icon: customIcon })
+        .bindPopup('<b>' + location.name + '</b><br>' + location.address)
+        .addTo(map)
     })
     // Event listener for location links
     document.querySelectorAll('.location-link').forEach(function (link) {
