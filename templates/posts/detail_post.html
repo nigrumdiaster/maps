@@ -1,4 +1,4 @@
-{% extends "base.html" %} 
+{% extends "base.html" %}
 {% load static %}
 
 {% block title %}{{ post.title }}{% endblock %}
@@ -6,124 +6,150 @@
 {% block content %}
 <div class="container-fluid">
     <div class="row">
-      <div class="col-lg-12">
-        <div class="card mt-n4 mx-n4 mb-n5">
-          <div class="bg-soft-warning">
-            <div class="card-body pb-4 mb-5">
-              <div class="row align-items-center">
-                <div class="col-md">
-                  <h4 class="fw-semibold" id="ticket-title">{{ post.title }}</h4>
-                  <div class="hstack gap-3 flex-wrap">
-                    <div class="text-muted">
-                      <span id="ticket-client">{{ post.post_type }}</span>
+        <div class="col-lg-12">
+            <div class="card mt-n4 mx-n4 mb-n5">
+                <div class="bg-soft-warning">
+                    <div class="card-body pb-4 mb-5">
+                        <div class="row align-items-center">
+                            <div class="col-md">
+                                <h4 class="fw-semibold" id="ticket-title">{{ post.title }}</h4>
+                                <div class="hstack gap-3 flex-wrap">
+                                    <div class="text-muted">
+                                        <span id="ticket-client">{{ post.post_type }}</span>
+                                    </div>
+                                    <div class="vr"></div>
+                                    <div class="text-muted">
+                                        Ngày tạo : <span class="fw-medium" id="create-date">{{ post.created_at|date:"M d, Y" }}
+                                            <i class="mdi mdi-circle-medium align-middle mx-1"></i>
+                                            {{ post.created_at|date:"H:i" }}</span>
+                                    </div>
+                                    <div class="vr"></div>
+                                    <div class="text-muted">
+                                        Lượt xem : <span class="fw-medium" id="create-date">{{ post.views }}</span>
+                                    </div>
+                                    <div class="vr"></div>
+                                    <div class="social-share">
+                                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}"
+                                            target="_blank" class="btn btn-primary">
+                                            <i class="fab fa-facebook-f"></i> Share on Facebook
+                                        </a>
+                                        <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ post.post_type }}"
+                                            target="_blank" class="btn btn-info">
+                                            <i class="fab fa-twitter"></i> Share on Twitter
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="vr"></div>
-                    <div class="text-muted">
-                      Ngày tạo : <span class="fw-medium" id="create-date">{{ post.created_at|date:"M d, Y" }} 
-                        <i class="mdi mdi-circle-medium align-middle mx-1"></i>
-                        {{ post.created_at|date:"H:i" }}</span>
-                    </div>
-                    <div class="vr"></div>
-                    <div class="text-muted">
-                      Lượt xem : <span class="fw-medium" id="create-date">{{ post.views }}</span>
-                    </div>
-                    <div class="vr"></div>
-                    <div class="social-share">
-                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" target="_blank" class="btn btn-primary">
-                            <i class="fab fa-facebook-f"></i> Share on Facebook
-                        </a>
-                        <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ post.loai_bai_viet }}" target="_blank" class="btn btn-info">
-                            <i class="fab fa-twitter"></i> Share on Twitter
-                        </a>
-                    </div>
-                  </div>
                 </div>
-              </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
-
     <div class="row">
-      <div class="col-xxl-9">
-        <div class="card">
-          <div class="card-body p-4">
-            <h6 class="fw-semibold text-uppercase mb-3">Mô Tả</h6>
-            <p class="text-muted">{{ location.description }}</p>
-            <h6 class="fw-semibold text-uppercase mb-3">Hình Ảnh</h6>
+        <div class="col-xxl-9">
+            <div class="card">
+                <div class="card-body p-4">
+                    <h6 class="fw-semibold text-uppercase mb-3">{{ post.notes}}</h6>
+                    {% for image in images %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}" data-bs-interval="10000">
+                        <img style="height: 100px; width: 100%; object-fit: contain" src="{{ image.images.url }}" class="d-block w-100" alt="Image for {{ post.title }}" />
+                    </div>
+                    {% endfor %}
+                    
+                    <p>{{ post.content|safe }}</p>
 
-            <!-- Carousel -->
-            <div id="carouselExampleInterval" class="carousel slide" data-bs-ride="carousel">
-              <div class="carousel-inner">
-                {% for image in images %}
-                  <div class="carousel-item {% if forloop.first %}active{% endif %}" data-bs-interval="10000">
-                    <img style="height: 500px; width: 100%; object-fit: contain" src="{{ image.images.url }}" class="d-block w-100" alt="Image for {{ location.name }}" />
-                  </div>
-                {% endfor %}
-              </div>
-              <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-              </button>
-              <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-              </button>
+                    {% if post.source_url %}
+                    <p><strong>Nguồn:</strong> <a href="{{ post.source_url }}" target="_blank">{{ post.source_url }}</a></p>
+                    {% endif %}
+                </div>
+                <!-- end card body -->
             </div>
-            <div class="row mt-3">
-              <div class="text-end">
-                <a href="{% url 'show_maps' %}?lat={{ location.latitude }}&lng={{ location.longitude }}" class="btn btn-primary">Xem trên bản đồ</a>
-              </div>
-            </div>
-          </div>
+            <!--end card-->
         </div>
-      </div>
-    </div>
+        <!--end col-->
+        <div class="col-xxl-3">
+            <div class="card">
+                <div class="card-header align-items-center d-flex">
+                    <h4 class="card-title mb-0 flex-grow-1">Latest Post</h4>
+                    <div>
+                        <button type="button" class="btn btn-soft-primary btn-sm">
+                            View all
+                        </button>
+                    </div>
+                </div><!-- end card-header -->
 
-    <!-- Button to view on map -->
-  </div>
-<article>
-    <h2>{{ post.title }}</h2>
-    <!-- Chia sẻ qua mạng xã hội -->
-    <div class="social-share">
-        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" target="_blank" class="btn btn-primary">
-            <i class="fab fa-facebook-f"></i> Share on Facebook
-        </a>
-        <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ post.loai_bai_viet }}" target="_blank" class="btn btn-info">
-            <i class="fab fa-twitter"></i> Share on Twitter
-        </a>
+                <div class="card-body">
+                    {% for latest_post in latest_posts %}
+                    <div class="d-flex mt-4">
+                        <div class="flex-shrink-0">
+                            <img src="{{ latest_post.image.url }}" class="rounded img-fluid" style="width: 60px; height: 60px; object-fit: cover;" alt="Image for {{ latest_post.title }}">
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="mb-1 lh-base">
+                            <a href="{% url 'detail_post' latest_post.id %}" class="text-reset">{{ latest_post.title }}</a>
+                            </h6>
+                            <p class="text-muted fs-12 mb-0">
+                            {{ latest_post.created_at|date:"M d, Y" }}
+                                <i class="mdi mdi-circle-medium align-middle mx-1"></i>
+                            {{ latest_post.created_at|date:"h:i A" }}
+                            </p>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <div class="mt-3 text-center">
+                        <a class="text-muted text-decoration-underline">View all News</a>
+                    </div>
+
+                </div><!-- end card body -->
+            </div>
+            <!--end card-->
+            <div class="card">
+                <div class="card-header align-items-center d-flex">
+                    <h4 class="card-title mb-0 flex-grow-1">Related Post</h4>
+                    <div>
+                        <button type="button" class="btn btn-soft-primary btn-sm">
+                            View all
+                        </button>
+                    </div>
+                </div><!-- end card-header -->
+
+                <div class="card-body">
+                    {% for related_post in related_posts %}
+                    <div class="d-flex mt-4">
+                        <div class="flex-shrink-0">
+                            <img src="{{ related_post.image.url }}" class="rounded img-fluid" style="width: 60px; height: 60px; object-fit: cover;" alt="Image for {{ related_post.title }}">
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="mb-1 lh-base">
+                            <a href="{% url 'detail_post' related_post.id %}" class="text-reset">{{ related_post.title }}</a>
+                            </h6>
+                            <p class="text-muted fs-12 mb-0">
+                            {{ related_post.created_at|date:"M d, Y" }}
+                                <i class="mdi mdi-circle-medium align-middle mx-1"></i>
+                            {{ related_post.created_at|date:"h:i A" }}
+                            </p>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <div class="mt-3 text-center">
+                        <a class="text-muted text-decoration-underline">View all News</a>
+                    </div>
+
+                </div><!-- end card body -->
+            </div>
+            <!--end card-->
+        </div>
+        <!--end col-->
     </div>
-    <p>{{ post.post_type }}</p>
-    <p>{{ post.content|safe }}</p> <!-- Sử dụng |safe để hiển thị HTML -->
-    <p><strong>Ngày tạo:</strong> {{ post.created_at }}</p>
-    <p><strong>Lượt xem:</strong> {{ post.views }}</p>
-    <!--{% if post.image %}
-        <img src="{{ post.image.url }}" alt="Post Image" class="img-fluid"> -->
-    {% endif %}
-    {% if post.source_url %}
-        <p><strong>Nguồn:</strong> <a href="{{ post.source_url }}" target="_blank">{{ post.source_url }}</a></p>
-    {% endif %}
+</div>
+<!-- Card body -->
+
+<!-- Button to view on map -->
+</div>
+<article>
     <p><a href="{% url 'list_post' %}">Quay lại danh sách bài viết</a></p>
 </article>
-
-<!-- Đề xuất 4 bài viết mới nhất -->
-<div class="latest-posts">
-    <h3>Bài viết mới nhất</h3>
-    <ul>
-        {% for latest_post in latest_posts %}
-            <li><a href="{% url 'detail_post' latest_post.id %}">{{ latest_post.title }}</a></li>
-        {% endfor %}
-    </ul>
-</div>
-
-<!-- Đề xuất 4 bài viết có cùng loai_bai_viet -->
-<div class="related-posts">
-    <h3>Có thể bạn quan tâm</h3>
-    <ul>
-        {% for related_post in related_posts %}
-            <li><a href="{% url 'detail_post' related_post.id %}">{{ related_post.title }}</a></li>
-        {% endfor %}
-    </ul>
-</div>
 {% endblock %}
