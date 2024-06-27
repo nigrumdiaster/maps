@@ -2,7 +2,6 @@ internpj/.env
 internpj/__pycache__
 destination/__pycache__
 destination/migrations
-media
 posts/__pycache__
 posts/migrations
 staticfiles
