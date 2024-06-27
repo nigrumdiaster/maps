@@ -31,9 +31,9 @@ def create_post(request):
         post_source_url = request.POST.get('postSourceURL')
         post_notes = request.POST.get('postNotes')
         post_views = request.POST.get('postViews', 0)  # Default to 0 if not provided
-        uploaded_images = request.FILES.getlist('file')
+        uploaded_image = request.FILES.get('file')
         
-        # Tạo đối tượng Post mới và lưu vào cơ sở dữ liệu
+        # Create new Post object and save to the database
         new_post = Post(
             title=post_title,
             post_type=type_post,
@@ -41,15 +41,11 @@ def create_post(request):
             source_url=post_source_url,
             notes=post_notes,
             views=post_views,
+            image=uploaded_image
         )
         new_post.save()
-
-        # Lưu từng hình ảnh vào cơ sở dữ liệu
-        for image in uploaded_images:
-            new_image = Post(post=new_post, image=image)
-            new_image.save()
         
-        # Chuyển hướng người dùng đến trang tạo bài viết với thông báo thành công
+        # Redirect user to the create post page with a success message
         context = {
             'message': 'Post created successfully!'
         }
@@ -57,7 +53,7 @@ def create_post(request):
 
 
 def list_post(request):
-    posts = Post.objects.all()
+    posts = Post.objects.all().order_by('-created_at')
     paginator = Paginator(posts, 10)  # Hiển thị 10 bài viết trên mỗi trang
 
     page_number = request.GET.get('page')
