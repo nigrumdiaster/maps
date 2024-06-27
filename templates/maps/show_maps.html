@@ -25,7 +25,7 @@
                   {% for location in page_obj %}
                     <tr>
                       <th scope="row">
-                        <a href="{% url 'show_maps' %}?lat={{ location.latitude }}&lng={{ location.longitude }}" class="fw-medium">{{ location.name }}</a>
+                        <a href="{% url 'show_maps' %}?lat={{ location.latitude }}&lng={{ location.longitude }}&page={{ page_obj.number }}" class="fw-medium">{{ location.name }}</a>
                       </th>
                     </tr>
                   {% endfor %}
