@@ -127,19 +127,24 @@
     // Locations data from Django view
     var locations = JSON.parse('{{ locations_json|escapejs }}')
     
-    // Add markers for each location
     locations.forEach(function (location) {
-      L.marker([location.latitude, location.longitude]).bindPopup(location.name).addTo(map)
-    })
+      var customIcon = L.icon({
+        iconUrl: location.image,
+        iconSize: [32, 32], // Adjust icon size as needed
+        iconAnchor: [16, 32], // Position of the icon relative to marker's location
+        popupAnchor: [0, -32] // Position of the popup relative to marker's anchor
+      })
     
+      L.marker([location.latitude, location.longitude], { icon: customIcon }).bindPopup(location.name).addTo(map)
+    })
     // Event listener for location links
     document.querySelectorAll('.location-link').forEach(function (link) {
-        link.addEventListener('click', function (event) {
-            event.preventDefault();
-            var lat = parseFloat(this.dataset.lat);
-            var lng = parseFloat(this.dataset.lng);
-            map.flyTo([lat, lng], 15);
-        });
-    });
+      link.addEventListener('click', function (event) {
+        event.preventDefault()
+        var lat = parseFloat(this.dataset.lat)
+        var lng = parseFloat(this.dataset.lng)
+        map.flyTo([lat, lng], 15)
+      })
+    })
   </script>
 {% endblock %}
