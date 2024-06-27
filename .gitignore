@@ -7,3 +7,5 @@ posts/migrations
 staticfiles
 maps/migrations
 maps/__pycache__
+library/migrations
+library/__pycache__

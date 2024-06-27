@@ -1,0 +1,22 @@
+<!-- library/templates/library/list_image.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image List</title>
+</head>
+<body>
+    <h1>Image List</h1>
+    <a href="{% url 'add_image' %}">Add Image</a>
+    <a href="{% url 'inherit_image' %}">Inherit Images</a>
+    <ul>
+        {% for image in object_list %}
+            <li>
+                <h3>{{ image.title }}</h3>
+                <img src="{{ image.image.url }}" alt="{{ image.title }}" style="max-width: 200px;">
+                <p>Created at: {{ image.created_at }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
