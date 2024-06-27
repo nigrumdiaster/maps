@@ -63,33 +63,36 @@
   <!-- Include Dropzone JS -->
   <script src="{% static 'assets/libs/dropzone/dropzone-min.js' %}"></script>
 
-  {% comment %}
-  <!-- Script for Dropzone options -->
-  <script>
-    Dropzone.options.myDropzone = {
-      paramName: 'file',
-      maxFilesize: 3, // MB
-      acceptedFiles: 'image/*',
-      init: function () {
-        this.on('success', function (file, response) {
-          // Handle the success response from the server
-          console.log(response)
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  {% if success %}
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        Swal.fire({
+          position: 'top-end',
+          icon: 'success',
+          title: 'Thành công!',
+          text: '{{ success }}',
+          showConfirmButton: false,
+          timer: 1500,
+          backdrop: false
         })
-        this.on('error', function (file, response) {
-          // Handle the error response from the server
-          console.error(response)
-        })
-      }
-    }
-  </script>
-  {% endcomment %}
+      })
+    </script>
+  {% endif %}
 
-  <!-- Other JavaScript files -->
-  <script src="{% static 'assets/libs/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-  <script src="{% static 'assets/libs/simplebar/simplebar.min.js' %}"></script>
-  <script src="{% static 'assets/libs/node-waves/waves.min.js' %}"></script>
-  <script src="{% static 'assets/libs/feather-icons/feather.min.js' %}"></script>
-  <script src="{% static 'assets/js/pages/plugins/lord-icon-2.1.0.js' %}"></script>
-  <script src="{% static 'assets/js/plugins.js' %}"></script>
-  <script src="{% static 'assets/js/app.js' %}"></script>
+  {% if error %}
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        Swal.fire({
+          position: 'top-end',
+          icon: 'error',
+          title: 'Oops...!',
+          text: '{{ error }}',
+          showConfirmButton: false,
+          timer: 1500,
+          backdrop: false
+        })
+      })
+    </script>
+  {% endif %}
 {% endblock %}

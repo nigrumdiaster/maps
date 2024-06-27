@@ -56,14 +56,17 @@ class Create_location(View):
                 new_image.save()
 
             # Prepare context for rendering the template
-            context = {
-                'message': 'Location created successfully!'
+            success = {
+                'success': 'Tạo điểm đến thành công!'
             }
-            return render(request, self.template_name, context)
+            return render(request, self.template_name, success)
         
         except Exception as e:
+            error = {
+                'error': 'Không tạo được điểm đến!'
+            }
             print(f"Error: {e}")
-            return render(request, template_error)
+            return render(request, self.template_name, error)
 class List_location(View):
     template_name = 'destination/list_location.html'
     def get(self, request):
