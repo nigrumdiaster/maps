@@ -150,6 +150,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 CKEDITOR_CONFIGS = {
     'default': {
+        'versionCheck': False,
         'toolbar': 'full',
         'height': 300,
         'width': 900,

@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+  <form action="{% url 'create_journey' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label for="journeyName" class="form-label">Tên hành trình</label>
+      <input type="text" class="form-control" id="journeyName" name="journeyName" placeholder="Nhập tên điểm đến" />
+    </div>
+    <div class="mb-3">
+      <label for="journeyDescription" class="form-label">Mô tả</label>
+      <textarea class="form-control" id="journeyDescription" name="journeyDescription" rows="3" placeholder="Nhập mô tả điểm đến"></textarea>
+    </div>
+    <div class="mb-3">
+      <label for="journeyTags" class="form-label">Tag (Ngăn cách bởi dấu phẩy)</label>
+      <input type="text" class="form-control" id="journeyTags" name="journeyTags" placeholder="Nhập tag" />
+    </div>
+    <div class="mb-3">
+      <label for="journeyImage" class="form-label">Hình ảnh</label>
+      <input type="file" class="form-control" id="journeyImage" name="journeyImage" placeholder="Tải hình ảnh lên" />
+    </div>
+    <div class="mb-3">
+      <label for="journeySong" class="form-label">Đường dẫn bài hát (link YouTube)</label>
+      <input type="url" class="form-control" id="journeySong" name="journeySong" placeholder="Nhập đường dẫn bài hát" />
+    </div>
+    <br /><br />
+    <div class="text-end">
+      <button type="submit" class="btn btn-primary">Thêm</button>
+    </div>
+  </form>
+  <br /><br /><br /><br /><br /><br />
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  {% if success %}
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        Swal.fire({
+          position: 'top-end',
+          icon: 'success',
+          title: 'Thành công!',
+          text: '{{ success }}',
+          showConfirmButton: false,
+          timer: 1500,
+          backdrop: false
+        })
+      })
+    </script>
+  {% endif %}
+
+  {% if error %}
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        Swal.fire({
+          position: 'top-end',
+          icon: 'error',
+          title: 'Oops...!',
+          text: '{{ error }}',
+          showConfirmButton: false,
+          timer: 1500,
+          backdrop: false
+        })
+      })
+    </script>
+  {% endif %}
+{% endblock %}

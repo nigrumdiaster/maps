@@ -25,6 +25,7 @@ urlpatterns = [
     path('maps/', include('maps.urls')),
     path('posts/', include('posts.urls')),
     path('library/', include('library.urls')),
+    path('journey/', include('journey.urls')),
     path('ckeditor/', include('ckeditor_uploader.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
