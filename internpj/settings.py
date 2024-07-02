@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'posts',
     'library',
     'maps',
+    'journey',
     'django.contrib.staticfiles',
     'taggit',
 ]
