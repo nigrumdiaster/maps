@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
 from django.utils import timezone
 from taggit.utils import parse_tags
-from geopy.geocoders import Nominatim
+
 
 from .models import Location, LocationImage
 from .utils import get_location_from_address

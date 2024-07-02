@@ -8,6 +8,6 @@ class Journey(models.Model):
     tags = TaggableManager()
     sound_url = models.URLField(blank=True, null=True)
     image = models.ImageField(upload_to='images/journey', blank=True, null=True)
-
+    locations = models.ManyToManyField(Location, related_name='journeys')
     def __str__(self):
         return self.name

@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+  <div class="row">
+    {% for journey in page_obj %}
+      <div class="col-xxl-6 mb-4">
+        <div class="card">
+          <div class="row g-0">
+            <div class="col-md-4">
+              <a href="{% url 'detail_journey' journey.id %}">
+                {% if journey.image %}
+                  <img class="rounded-start img-fluid" style="height: 250px; width: 1000px; object-fit: contain" src="{{ journey.image.url }}" alt="{{ journey.name }}" />
+                {% else %}
+                  <img class="rounded-start img-fluid h-100 object-cover" src="{% static 'images/default.jpg' %}" alt="No Image" />
+                {% endif %}
+              </a>
+            </div>
+            <div class="col-md-8">
+              <div class="card-body">
+                <h5 class="card-title mb-2" style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; max-height: 3em; line-height: 1.5em; min-height: 3em;"><a href="{% url 'detail_journey' journey.id %}">{{ journey.name }}</a></h5>
+                <p class="card-text text-muted mb-0" style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; max-height: 3em; line-height: 1.5em; min-height: 3em;">{{ journey.description }}</p>
+              </div>
+              <div class="card-footer">
+                <p class="card-text">
+                  <small class="text-muted">Tag: {{ journey.tags.all|join:', ' }}</small>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- end card -->
+      </div>
+      <!-- end col -->
+    {% endfor %}
+  </div>
+
+  <div class="pagination-container">
+    <nav aria-label="...">
+      <ul class="pagination">
+        {% if page_obj.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page=1" aria-label="First">&laquo; First</a>
+          </li>
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">&larr; Prev</a>
+          </li>
+        {% else %}
+          <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&laquo; First</a>
+          </li>
+          <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&larr; Prev</a>
+          </li>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+          {% if page_obj.number == num %}
+            <li class="page-item active">
+              <a class="page-link" href="#">{{ num }} <span class="sr-only">(current)</span></a>
+            </li>
+          {% else %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+            </li>
+          {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">Next &rarr;</a>
+          </li>
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">Last &raquo;</a>
+          </li>
+        {% else %}
+          <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Next &rarr;</a>
+          </li>
+          <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Last &raquo;</a>
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
+{% endblock %}
