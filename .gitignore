@@ -9,3 +9,5 @@ maps/migrations
 maps/__pycache__
 library/migrations
 library/__pycache__
+journey/migrations
+journey/__pycache__
