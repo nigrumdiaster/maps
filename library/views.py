@@ -7,20 +7,17 @@ from django.views.generic import ListView, CreateView, TemplateView
 from .models import Image, Video
 from django.core.paginator import Paginator
 from posts.models import Post
-from destination.models import LocationImage
+from destination.models import LocationImage, Location
 
 class ListImageView(ListView):
     model = Image
     template_name = 'library/list_image.html'
+    context_object_name = 'images'
+    paginate_by = 10  # Hiển thị 10 hình ảnh trên mỗi trang
 
-    def list_image(request):
-    image = Image.objects.all().order_by('-created_at')
-    paginator = Paginator(image, 10)  # Hiển thị 10 bài viết trên mỗi trang
+    def get_queryset(self):
+        return Image.objects.all().order_by('-created_at')
 
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    return render(request, 'library/list_image.html', {'page_obj': page_obj})
 
 class AddImageView(CreateView):
     model = Image
@@ -43,25 +40,19 @@ class InheritImageView(TemplateView):
     context_object_name = 'images'
     paginate_by = 10
 
+    def inherit_images(self):
+        posts_images = Post.objects.values_list('image', 'title')
+        destinations_images = LocationImage.objects.values_list('images', 'location_id')
+
+        for image_url, title in posts_images:
+            if image_url and not Image.objects.filter(image=image_url).exists():
+                Image.objects.create(title=title, image=image_url)
+
+        for image_url, location_id in destinations_images:
+            location_name=Location.objects.get(pk=location_id)
+            if image_url and not Image.objects.filter(image=image_url).exists():
+                Image.objects.create(title=location_name, image=image_url)
+
     def get(self, request, *args, **kwargs):
-        # Fetch image URLs from Post and Destination models
-        posts_images = Post.objects.values_list('image', flat=True)
-        destinations_images = LocationImage.objects.values_list('images', flat=True)
-
-        # Print the values to check
-        print("Post images:", list(posts_images))
-        print("Destination images:", list(destinations_images))
-
-        # Create new Image instances for each inherited image URL
-        for image_url in posts_images:
-            if image_url:
-                Image.objects.create(title='Inherited from Post', image=image_url)
-
-        for image_url in destinations_images:
-            if image_url:
-                Image.objects.create(title='Inherited from Destination', image=image_url)
-
-        return super().get(request, *args, **kwargs)
-    
-    def get_queryset(self):
-        return Image.objects.all()
+        # Inherit images if they don't already exist
+        self.inherit_images()
