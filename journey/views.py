@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import Journey
 from taggit.utils import parse_tags
 from django.core.paginator import Paginator
+from destination.models import Location
 
 template_error = '404error.html'
 class Create_journey(View):
@@ -68,7 +69,7 @@ class List_journey(View):
 
 
 class Detail_journey(View):
-    template_name = 'destination/detail_journey.html'
+    template_name = 'journey/detail_journey.html'
 
     def get(self, request, pk):
         try:
@@ -81,3 +82,21 @@ class Detail_journey(View):
         except Exception as e:
             print(f"Error: {e}")
             return render(request, template_error)
+        
+
+def add_locations_to_journey(request, pk):
+    journey = get_object_or_404(Journey, pk=pk)
+    
+    # Get locations that are not already associated with the journey
+    locations = Location.objects.exclude(journeys=journey)
+
+    if request.method == 'POST':
+        selected_location_ids = request.POST.getlist('locations')
+        selected_locations = Location.objects.filter(id__in=selected_location_ids)
+        journey.locations.add(*selected_locations)
+        journey.save()
+        return redirect('detail_journey', pk=journey.pk)
+
+    return render(request, 'add_locations_to_journey.html', {'journey': journey, 'locations': locations})
+
+

@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'journey',
     'django.contrib.staticfiles',
     'taggit',
+    'django_select2',
 ]
 
 MIDDLEWARE = [
