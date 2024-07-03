@@ -1,22 +1,110 @@
 <!-- library/templates/library/list_image.html -->
+{% extends "base.html" %}
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Image List</title>
-</head>
-<body>
-    <h1>Image List</h1>
-    <a href="{% url 'add_image' %}">Add Image</a>
-    <a href="{% url 'inherit_image' %}">Inherit Images</a>
-    <ul>
-        {% for image in object_list %}
-            <li>
-                <h3>{{ image.title }}</h3>
-                <img src="{{ image.image.url }}" alt="{{ image.title }}" style="max-width: 200px;">
-                <p>Created at: {{ image.created_at }}</p>
-            </li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
+{% load static %}
+
+{% block content %}
+
+    <body>
+        <h1>Image List</h1>
+        <a href="{% url 'add_image' %}">Add Image</a>
+        <a href="{% url 'inherit_image' %}">Inherit Images</a>
+        <ul>
+            {% for image in object_list %}
+                <li>
+                    <h3>{{ image.title }}</h3>
+                    <img src="{{ image.image.url }}" alt="{{ image.title }}" style="max-width: 200px;">
+                    <p>Created at: {{ image.created_at }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+        <div class="pagination">
+            <span class="step-links">
+                {% if image.has_previous %}
+                    <a href="?page=1">&laquo; first</a>
+                    <a href="?page={{ image.previous_page_number }}">previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ image.number }} of {{ image.paginator.num_pages }}.
+                </span>
+
+                {% if images.has_next %}
+                    <a href="?page={{ image.next_page_number }}">next</a>
+                    <a href="?page={{ image.paginator.num_pages }}">last &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
+
+    <div id="gallery" class="pswp-gallery">
+        <a href="{% static 'path-to-large-image1.jpg' %}" data-pswp-width="1200" data-pswp-height="800">
+            <img src="{% static 'path-to-thumbnail-image1.jpg' %}" alt="Description">
+        </a>
+        <!-- Add more images similarly -->
+    </div>
+
+    <script type="module">
+        import PhotoSwipeLightbox from './photoswipe-lightbox.esm.js';
+        import PhotoSwipe from './photoswipe.esm.js';
+
+        const lightbox = new PhotoSwipeLightbox({
+            gallery: '#gallery',
+            children: 'a',
+            pswpModule: PhotoSwipe,
+            // Add additional options here if needed
+        });
+
+        lightbox.on('uiRegister', function() {
+            lightbox.pswp.ui.registerElement({
+                name: 'fullscreen-button',
+                order: 9,
+                isButton: true,
+                tagName: 'button',
+                html: '⛶', // Fullscreen icon
+                onClick: (event, el) => {
+                    if (!document.fullscreenElement) {
+                        document.documentElement.requestFullscreen();
+                    } else {
+                        if (document.exitFullscreen) {
+                            document.exitFullscreen();
+                        }
+                    }
+                }
+            });
+
+            lightbox.pswp.ui.registerElement({
+                name: 'rotate-left-button',
+                order: 10,
+                isButton: true,
+                tagName: 'button',
+                html: '⟲', // Rotate left icon
+                onClick: (event, el) => {
+                    const currentSlide = lightbox.pswp.currSlide;
+                    const img = currentSlide.content.element;
+                    let currentRotation = img.getAttribute('data-rotation') || 0;
+                    currentRotation = (parseInt(currentRotation) - 90) % 360;
+                    img.style.transform = `rotate(${currentRotation}deg)`;
+                    img.setAttribute('data-rotation', currentRotation);
+                }
+            });
+
+            lightbox.pswp.ui.registerElement({
+                name: 'rotate-right-button',
+                order: 11,
+                isButton: true,
+                tagName: 'button',
+                html: '⟳', // Rotate right icon
+                onClick: (event, el) => {
+                    const currentSlide = lightbox.pswp.currSlide;
+                    const img = currentSlide.content.element;
+                    let currentRotation = img.getAttribute('data-rotation') || 0;
+                    currentRotation = (parseInt(currentRotation) + 90) % 360;
+                    img.style.transform = `rotate(${currentRotation}deg)`;
+                    img.setAttribute('data-rotation', currentRotation);
+                }
+            });
+        });
+
+        lightbox.init();
+    </script>
+{% endblock %}
