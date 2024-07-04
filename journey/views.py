@@ -101,19 +101,27 @@ class Detail_journey(View):
             return render(request, template_error)
         
 
-def add_locations_to_journey(request, pk):
+def change_locations_in_journey(request, pk):
     journey = get_object_or_404(Journey, pk=pk)
-    
-    # Get locations that are not already associated with the journey
-    locations = Location.objects.exclude(journeys=journey)
+    locations = Location.objects.all()
 
     if request.method == 'POST':
         selected_location_ids = request.POST.getlist('locations')
         selected_locations = Location.objects.filter(id__in=selected_location_ids)
-        journey.locations.add(*selected_locations)
+        journey.locations.set(selected_locations)
         journey.save()
         return redirect('detail_journey', pk=journey.pk)
 
-    return render(request, 'journey/add_locations_to_journey.html', {'journey': journey, 'locations': locations})
+    # Prepare data for Grid.js
+    location_data = [
+        {"name": location.name, "image": location.first_image() if location.first_image() else ""}
+        for location in locations
+    ]
+
+    return render(request, 'journey/change_locations_in_journey.html', {
+        'journey': journey,
+        'locations': locations,
+        'location_data': location_data
+    })
 
 

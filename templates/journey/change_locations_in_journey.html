@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+  <form method="post" action="{% url 'change_locations_in_journey' journey.id %}">
+    {% csrf_token %}
+    <select required multiple="multiple" name="locations" id="multiselect-basic">
+      {% for location in locations %}
+        <option value="{{ location.id }}" data-image-url="{{ location.first_image }}"
+          {% if location in journey.locations.all %} selected {% endif %}>
+          {{ location.name }}
+        </option>
+      {% endfor %}
+    </select>
+    <button type="submit">Add Locations</button>
+  </form>
+
+  <div id="grid-container"></div>
+
+  <!-- multi.js -->
+  <script src="{% static 'assets/libs/multi.js/multi.min.js' %}"></script>
+  <!-- autocomplete css -->
+  <link rel="stylesheet" href="{% static 'assets/libs/@tarekraafat/autocomplete.js/css/autoComplete.css' %}" />
+  <!-- init js -->
+  <script src="{% static 'assets/js/pages/form-advanced.init.js' %}"></script>
+  <!-- input spin init -->
+  <script src="{% static 'assets/js/pages/form-input-spin.init.js' %}"></script>
+
+  <!-- Custom JavaScript for Grid.js -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const locationData = {{ location_data|safe }};
+
+      new gridjs.Grid({
+        columns: [
+          {
+            name: 'Image',
+            formatter: (cell) => gridjs.html(`<img src="${cell}" alt="Location Image" style="width: 100px; height: 100px; object-fit: cover;" />`)
+          },
+          'Name'
+        ],
+        data: locationData.map(location => [location.image, location.name]),
+        pagination: true,
+        search: true,
+        sort: true
+      }).render(document.getElementById('grid-container'));
+    });
+  </script>
+
+  <style>
+    .selected-image {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      margin: 5px;
+    }
+  </style>
+{% endblock %}

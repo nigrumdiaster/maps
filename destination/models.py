@@ -17,6 +17,8 @@ class Location(models.Model):
 
     def __str__(self):
         return self.name
+    def first_image(self):
+        return self.images.first().images.url if self.images.exists() else None
 
 def get_image_upload_path(instance, filename):
     # Encode the filename using a hash function
