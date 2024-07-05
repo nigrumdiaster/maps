@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block content %}
 {% for image in images %}
 <div class="row">
@@ -13,7 +14,7 @@
                 <div class="gallery-box card">
                   <div class="gallery-container">
                     <a class="lightGallery" href="{{ image.image.url }}" title="">
-                      <img class="gallery-img img-fluid mx-auto" src="{{ image.image.url }}" alt="" />
+                      <img class="gallery-img img-fluid mx-auto" src="{{ image.image.url }}" alt="{{ image.title }}" />
                       <div class="gallery-overlay">
                         <h5 class="overlay-caption">{{ image.title }}</h5>
                       </div>
@@ -22,7 +23,7 @@
                   <div class="box-content">
                     <div class="d-flex align-items-center mt-1">
                       <div class="flex-grow-1 text-muted">
-                        by <a href="" class="text-body text-truncate">R</a>
+                        by <a href="" class="text-body text-truncate">HQ</a>
                       </div>
                       <div class="flex-shrink-0">
                         <div class="d-flex gap-3"></div>
@@ -99,29 +100,33 @@
 <!-- lightGallery JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/lightgallery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/thumbnail/lg-thumbnail.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/mediumZoom/lg-medium-zoom.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/zoom/lg-zoom.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/fullscreen/lg-fullscreen.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/autoplay/lg-autoplay.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/share/lg-share.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/hash/lg-hash.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/pager/lg-pager.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/pager/lg-rolate.min.js"></script>
+
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-      const galleryWrapper = document.querySelector('.gallery-wrapper');
-      if (galleryWrapper) {
-          lightGallery(galleryWrapper, {
-              selector: '.lightGallery',
-              plugins: [lgThumbnail, lgZoom, lgFullscreen, lgAutoplay, lgShare, lgHash, lgPager],
-              thumbnail: true,
-              zoom: true,
-              fullScreen: true,
-              autoplay: true,
-              share: true,
-              hash: true,
-              pager: true,
-          });
-      }
+    lightGallery(document.querySelector('.gallery-wrapper'), { // Khởi tạo trên .gallery-wrapper
+        selector: '.lightGallery', // Sử dụng selector '.gallery-item'
+          plugins: [lgThumbnail, lgZoom, lgFullscreen, lgAutoplay, lgShare, lgHash, lgPager],
+          thumbnail: true,
+          zoom: true,
+          fullScreen: true,
+          autoplay: true,
+          share: true,
+          hash: true,
+          pager: true,
+          toolbarButtons: ['close', 'zoomIn', 'zoomOut', 'download', 
+        'share', 'rotateLeft', 'rotateRight', 'flipHorizontal', 'flipVertical',
+        'actualSize'],
+      });
+      
+      document.querySelectorAll('.gallery-wrapper .lightGallery')
   });
-</script>
+  </script>
 {% endblock %}
