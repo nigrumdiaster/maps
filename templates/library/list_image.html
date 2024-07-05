@@ -1,143 +1,127 @@
-{% extends "base.html" %}
-
+{% extends 'base.html' %}
 {% load static %}
-
 {% block content %}
-
-    <h1>Image List</h1>
-    <a href="{% url 'add_image' %}">Add Image</a>
-    <a href="{% url 'inherit_image' %}">Inherit Images</a>
-    <ul>
-        {% for image in object_list %}
-            <li>
-                <h3>{{ image.title }}</h3>
-                <img src="{{ image.image.url }}" alt="{{ image.title }}" style="max-width: 200px;">
-                <p>Created at: {{ image.created_at }}</p>
-            </li>
-        {% endfor %}
-   </ul>
-    <div class="pagination-container">
-        <nav aria-label="...">
-            <ul class="pagination">
-                {% if page_obj.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page=1" aria-label="First">&laquo; First</a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">&larr; Prev</a>
-                    </li>
-                {% else %}
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&laquo; First</a>
-                    </li>
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&larr; Prev</a>
-                    </li>
-                {% endif %}
-
-                {% for num in page_obj.paginator.page_range %}
-                    {% if num > page_obj.number|add:-5 and num < page_obj.number|add:5 %}
-                        {% if page_obj.number == num %}
-                            <li class="page-item active">
-                                <a class="page-link" href="#">{{ num }} <span class="sr-only">(current)</span></a>
-                            </li>
-                        {% else %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-                            </li>
-                        {% endif %}
-                    {% endif %}
-                {% endfor %}
-
-                {% if page_obj.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">Next &rarr;</a>
-                    </li>
-                    <li class="page-item">                            
-                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">Last &raquo;</a>
-                    </li>
-                {% else %}
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Next &rarr;</a>
-                    </li>
-                    <li class="page-item disabled">
-                         <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Last &raquo;</a>
-                    </li>
-                {% endif %}
-            </ul>
-        </nav>
+{% for image in images %}
+<div class="row">
+  <div class="col-lg-12">
+    <div class="">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="row gallery-wrapper">
+              <div class="element-item col-xxl-5 col-xl-2 col-sm-6 project designing development" data-category="designing development">
+                <div class="gallery-box card">
+                  <div class="gallery-container">
+                    <a class="lightGallery" href="{{ image.image.url }}" title="">
+                      <img class="gallery-img img-fluid mx-auto" src="{{ image.image.url }}" alt="" />
+                      <div class="gallery-overlay">
+                        <h5 class="overlay-caption">{{ image.title }}</h5>
+                      </div>
+                    </a>
+                  </div>
+                  <div class="box-content">
+                    <div class="d-flex align-items-center mt-1">
+                      <div class="flex-grow-1 text-muted">
+                        by <a href="" class="text-body text-truncate">R</a>
+                      </div>
+                      <div class="flex-shrink-0">
+                        <div class="d-flex gap-3"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- end col -->
+            </div>
+            <!-- end row -->
+          </div>
+        </div>
+        <!-- end row -->
+      </div>
+      <!-- end card body -->
     </div>
+    <!-- end card -->
+  </div>
+  <!-- end col -->
+</div>
+{% endfor %}
+<div class="pagination-container">
+  <nav aria-label="...">
+    <ul class="pagination">
+      {% if page_obj.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page=1" aria-label="First">&laquo; First</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">&larr; Prev</a>
+      </li>
+      {% else %}
+      <li class="page-item disabled">
+        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&laquo; First</a>
+      </li>
+      <li class="page-item disabled">
+        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&larr; Prev</a>
+      </li>
+      {% endif %}
+      {% for num in page_obj.paginator.page_range %}
+      {% if num > page_obj.number|add:-5 and num < page_obj.number|add:5 %}
+      {% if page_obj.number == num %}
+      <li class="page-item active">
+        <a class="page-link" href="#">{{ num }} <span class="sr-only">(current)</span></a>
+      </li>
+      {% else %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+      </li>
+      {% endif %}
+      {% endif %}
+      {% endfor %}
+      {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">Next &rarr;</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">Last &raquo;</a>
+      </li>
+      {% else %}
+      <li class="page-item disabled">
+        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Next &rarr;</a>
+      </li>
+      <li class="page-item disabled">
+        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Last &raquo;</a>
+      </li>
+      {% endif %}
+    </ul>
+  </nav>
+</div>
 
 
-    <div id="gallery" class="pswp-gallery">
-        <a href="{% static 'path-to-large-image1.jpg' %}" data-pswp-width="1200" data-pswp-height="800">
-            <img src="{% static 'path-to-thumbnail-image1.jpg' %}" alt="Description">
-        </a>
-        <!-- Add more images similarly -->
-    </div>
+<!-- lightGallery JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/lightgallery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/thumbnail/lg-thumbnail.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/mediumZoom/lg-medium-zoom.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/fullscreen/lg-fullscreen.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/autoplay/lg-autoplay.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/share/lg-share.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/hash/lg-hash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/pager/lg-pager.min.js"></script>
 
-    <script type="module">
-        import PhotoSwipeLightbox from './photoswipe-lightbox.esm.js';
-        import PhotoSwipe from './photoswipe.esm.js';
-
-        const lightbox = new PhotoSwipeLightbox({
-            gallery: '#gallery',
-            children: 'a',
-            pswpModule: PhotoSwipe,
-            // Add additional options here if needed
-        });
-
-        lightbox.on('uiRegister', function() {
-            lightbox.pswp.ui.registerElement({
-                name: 'fullscreen-button',
-                order: 9,
-                isButton: true,
-                tagName: 'button',
-                html: '⛶', // Fullscreen icon
-                onClick: (event, el) => {
-                    if (!document.fullscreenElement) {
-                        document.documentElement.requestFullscreen();
-                    } else {
-                        if (document.exitFullscreen) {
-                            document.exitFullscreen();
-                        }
-                    }
-                }
-            });
-
-            lightbox.pswp.ui.registerElement({
-                name: 'rotate-left-button',
-                order: 10,
-                isButton: true,
-                tagName: 'button',
-                html: '⟲', // Rotate left icon
-                onClick: (event, el) => {
-                    const currentSlide = lightbox.pswp.currSlide;
-                    const img = currentSlide.content.element;
-                    let currentRotation = img.getAttribute('data-rotation') || 0;
-                    currentRotation = (parseInt(currentRotation) - 90) % 360;
-                    img.style.transform = `rotate(${currentRotation}deg)`;
-                    img.setAttribute('data-rotation', currentRotation);
-                }
-            });
-
-            lightbox.pswp.ui.registerElement({
-                name: 'rotate-right-button',
-                order: 11,
-                isButton: true,
-                tagName: 'button',
-                html: '⟳', // Rotate right icon
-                onClick: (event, el) => {
-                    const currentSlide = lightbox.pswp.currSlide;
-                    const img = currentSlide.content.element;
-                    let currentRotation = img.getAttribute('data-rotation') || 0;
-                    currentRotation = (parseInt(currentRotation) + 90) % 360;
-                    img.style.transform = `rotate(${currentRotation}deg)`;
-                    img.setAttribute('data-rotation', currentRotation);
-                }
-            });
-        });
-
-        lightbox.init();
-    </script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+      const galleryWrapper = document.querySelector('.gallery-wrapper');
+      if (galleryWrapper) {
+          lightGallery(galleryWrapper, {
+              selector: '.lightGallery',
+              plugins: [lgThumbnail, lgZoom, lgFullscreen, lgAutoplay, lgShare, lgHash, lgPager],
+              thumbnail: true,
+              zoom: true,
+              fullScreen: true,
+              autoplay: true,
+              share: true,
+              hash: true,
+              pager: true,
+          });
+      }
+  });
+</script>
 {% endblock %}

@@ -26,7 +26,7 @@ class Command(BaseCommand):
                         post_name = unidecode(post.title).replace(' ', '_').replace('"', '')
                         random_number = random.randint(1, 10000)
                         image_name = post_name + '_' + str(random_number) + '.jpg'
-                        save_path = os.path.join(settings.MEDIA_ROOT, 'library', image_name )
+                        save_path = os.path.join(settings.MEDIA_ROOT, 'library/images', image_name )
                         os.makedirs(os.path.dirname(save_path), exist_ok=True)
 
                         with open(save_path, 'wb') as f:
