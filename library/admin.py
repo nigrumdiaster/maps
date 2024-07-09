@@ -1,3 +1,7 @@
 from django.contrib import admin
+from .models import Image, Video
 
-# Register your models here.
+class ImageAdmin(admin.ModelAdmin):
+    def Image(self, obj):
+        return ", ".join(tag.name for tag in obj.tags.all())
+admin.site.register(Image, ImageAdmin)

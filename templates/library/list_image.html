@@ -1,22 +1,132 @@
-<!-- library/templates/library/list_image.html -->
+{% extends 'base.html' %}
+{% load static %}
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Image List</title>
-</head>
-<body>
-    <h1>Image List</h1>
-    <a href="{% url 'add_image' %}">Add Image</a>
-    <a href="{% url 'inherit_image' %}">Inherit Images</a>
-    <ul>
-        {% for image in object_list %}
-            <li>
-                <h3>{{ image.title }}</h3>
-                <img src="{{ image.image.url }}" alt="{{ image.title }}" style="max-width: 200px;">
-                <p>Created at: {{ image.created_at }}</p>
-            </li>
-        {% endfor %}
+{% block content %}
+{% for image in images %}
+<div class="row">
+  <div class="col-lg-12">
+    <div class="">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="row gallery-wrapper">
+              <div class="element-item col-xxl-5 col-xl-2 col-sm-6 project designing development" data-category="designing development">
+                <div class="gallery-box card">
+                  <div class="gallery-container">
+                    <a class="lightGallery" href="{{ image.image.url }}" title="">
+                      <img class="gallery-img img-fluid mx-auto" src="{{ image.image.url }}" alt="{{ image.title }}" />
+                      <div class="gallery-overlay">
+                        <h5 class="overlay-caption">{{ image.title }}</h5>
+                      </div>
+                    </a>
+                  </div>
+                  <div class="box-content">
+                    <div class="d-flex align-items-center mt-1">
+                      <div class="flex-grow-1 text-muted">
+                        by <a href="" class="text-body text-truncate">HQ</a>
+                      </div>
+                      <div class="flex-shrink-0">
+                        <div class="d-flex gap-3"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- end col -->
+            </div>
+            <!-- end row -->
+          </div>
+        </div>
+        <!-- end row -->
+      </div>
+      <!-- end card body -->
+    </div>
+    <!-- end card -->
+  </div>
+  <!-- end col -->
+</div>
+{% endfor %}
+<div class="pagination-container">
+  <nav aria-label="...">
+    <ul class="pagination">
+      {% if page_obj.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page=1" aria-label="First">&laquo; First</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">&larr; Prev</a>
+      </li>
+      {% else %}
+      <li class="page-item disabled">
+        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&laquo; First</a>
+      </li>
+      <li class="page-item disabled">
+        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&larr; Prev</a>
+      </li>
+      {% endif %}
+      {% for num in page_obj.paginator.page_range %}
+      {% if num > page_obj.number|add:-5 and num < page_obj.number|add:5 %}
+      {% if page_obj.number == num %}
+      <li class="page-item active">
+        <a class="page-link" href="#">{{ num }} <span class="sr-only">(current)</span></a>
+      </li>
+      {% else %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+      </li>
+      {% endif %}
+      {% endif %}
+      {% endfor %}
+      {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">Next &rarr;</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}" aria-label="Last">Last &raquo;</a>
+      </li>
+      {% else %}
+      <li class="page-item disabled">
+        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Next &rarr;</a>
+      </li>
+      <li class="page-item disabled">
+        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Last &raquo;</a>
+      </li>
+      {% endif %}
     </ul>
-</body>
-</html>
+  </nav>
+</div>
+
+
+<!-- lightGallery JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/lightgallery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/thumbnail/lg-thumbnail.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/zoom/lg-zoom.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/fullscreen/lg-fullscreen.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/autoplay/lg-autoplay.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/share/lg-share.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/hash/lg-hash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/pager/lg-pager.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/plugins/pager/lg-rolate.min.js"></script>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    lightGallery(document.querySelector('.gallery-wrapper'), { // Khởi tạo trên .gallery-wrapper
+        selector: '.lightGallery', // Sử dụng selector '.gallery-item'
+          plugins: [lgThumbnail, lgZoom, lgFullscreen, lgAutoplay, lgShare, lgHash, lgPager],
+          thumbnail: true,
+          zoom: true,
+          fullScreen: true,
+          autoplay: true,
+          share: true,
+          hash: true,
+          pager: true,
+          toolbarButtons: ['close', 'zoomIn', 'zoomOut', 'download', 
+        'share', 'rotateLeft', 'rotateRight', 'flipHorizontal', 'flipVertical',
+        'actualSize'],
+      });
+      
+      document.querySelectorAll('.gallery-wrapper .lightGallery')
+  });
+  </script>
+{% endblock %}

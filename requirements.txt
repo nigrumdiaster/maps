@@ -7,3 +7,5 @@ django-taggit
 django-ckeditor
 unidecode
 requests
+django_select2
+beautifulsoup4
