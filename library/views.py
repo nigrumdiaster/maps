@@ -4,6 +4,7 @@ from urllib import request
 from django.db.models.query import QuerySet
 from django.urls import reverse_lazy
 from django.shortcuts import render, get_object_or_404, redirect
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, CreateView, TemplateView
 from .models import Image, Video
 from django.core.paginator import Paginator
@@ -23,6 +24,7 @@ class ListImageView(ListView):
 
     def get_queryset(self):
         return Image.objects.all().order_by('-created_at')
+    
 
 
 class AddImageView(CreateView):
@@ -30,6 +32,27 @@ class AddImageView(CreateView):
     fields = ['title', 'image']
     template_name = 'library/add_image.html'
     success_url = reverse_lazy('list_image')
+
+    @csrf_exempt 
+    def add_image(request):
+        if request.method == 'GET':
+            return render(request, "library/add_image.html")
+        
+        elif request.method == 'POST':
+            image_title = request.POST.get('imageTitle')
+            uploaded_image = request.FILES.get('file')
+            
+            new_image = Image(
+                title=image_title,
+                image=uploaded_image
+            )
+            new_image.save()
+            
+            # Redirect user to the create post page with a success message
+            success = {
+                    'success': 'Tạo bài viết thành công!'
+                }
+            return render(request, "library/add_image.html", success)
 
 class InheritImageView(TemplateView):
     template_name = 'library/inherit_image.html'
@@ -52,7 +75,7 @@ class InheritImageView(TemplateView):
     def get(self, request, *args, **kwargs):
         # Inherit images if they don't already exist
         self.inherit_images()
-        
+
 class ListVideoView(ListView):
     model = Video
     template_name = 'library/list_video.html'
