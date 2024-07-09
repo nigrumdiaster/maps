@@ -6,7 +6,7 @@ class Journey(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
     tags = TaggableManager()
-    sound_url = models.URLField(blank=True, null=True)
+    sound = models.FileField(upload_to='sounds/journey/', blank=True, null=True)
     image = models.ImageField(upload_to='images/journey', blank=True, null=True)
     locations = models.ManyToManyField(Location, related_name='journeys')
     def __str__(self):

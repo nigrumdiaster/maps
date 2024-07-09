@@ -5,6 +5,9 @@ from .models import Journey
 from taggit.utils import parse_tags
 from django.core.paginator import Paginator
 from destination.models import Location
+from .utils import YouTubeDownloader
+import os
+from django.core.files import File
 
 template_error = '404error.html'
 class Create_journey(View):
@@ -16,27 +19,41 @@ class Create_journey(View):
 
     @csrf_exempt
     def post(self, request):
-        try:
-            journey_name = request.POST.get('journeyName')
-            journey_description = request.POST.get('journeyDescription')
-            journey_tags = request.POST.get('journeyTags')
-            journey_song = request.POST.get('journeySong')
-            uploaded_image = request.FILES.get('journeyImage')
-            
+        journey_name = request.POST.get('journeyName')
+        journey_description = request.POST.get('journeyDescription')
+        journey_tags = request.POST.get('journeyTags')
+        journey_song = request.POST.get('journeySong')
+        uploaded_image = request.FILES.get('journeyImage')
 
-            # Create a new Journey object and save it
+        # Download the audio
+        downloader = YouTubeDownloader(journey_song)
+        audio_path = downloader.download_audio()
+        print(f"Downloaded audio file path: {audio_path}")
+
+            # Save the audio file using Django's File system
+        with open(audio_path, 'rb') as audio_file:
+            django_audio_file = File(audio_file)
+
+            # Create a new Journey object
             new_journey = Journey(
-                name=journey_name,
-                description=journey_description,
-                sound_url=journey_song,
-                image=uploaded_image
-            )
-            new_journey.save()
-            # Add tags to the new journey if provided
+                    name=journey_name,
+                    description=journey_description,
+                    image=uploaded_image
+                )
+            new_journey.sound.save(os.path.basename(audio_path), django_audio_file)
+
+                # Add tags to the new journey if provided
             if journey_tags:
                 tags = parse_tags(journey_tags)
                 new_journey.tags.add(*tags)
-            
+
+            # Save the new journey
+            new_journey.save()
+
+            if os.path.exists(audio_path):
+                os.remove(audio_path)
+                print(f"Deleted audio file path: {audio_path}")
+
             success = {
                 'success': 'Tạo điểm đến thành công!'
             }
@@ -44,12 +61,12 @@ class Create_journey(View):
             # Redirect to a success page or the journey detail page
             return render(request, self.template_name, success)
         
-        except Exception as e:
-            error = {
-                'error': 'Không tạo được điểm đến!'
-            }
-            print(f"Error: {e}")
-            return render(request, self.template_name, error)
+        # except Exception as e:
+        #     error = {
+        #         'error': 'Không tạo được điểm đến!'
+        #     }
+        #     print(f"Error: {e}")
+        #     return render(request, self.template_name, error)
 class List_journey(View):
     template_name = 'journey/list_journey.html'
     def get(self, request):
@@ -84,19 +101,27 @@ class Detail_journey(View):
             return render(request, template_error)
         
 
-def add_locations_to_journey(request, pk):
+def change_locations_in_journey(request, pk):
     journey = get_object_or_404(Journey, pk=pk)
-    
-    # Get locations that are not already associated with the journey
-    locations = Location.objects.exclude(journeys=journey)
+    locations = Location.objects.all()
 
     if request.method == 'POST':
         selected_location_ids = request.POST.getlist('locations')
         selected_locations = Location.objects.filter(id__in=selected_location_ids)
-        journey.locations.add(*selected_locations)
+        journey.locations.set(selected_locations)
         journey.save()
         return redirect('detail_journey', pk=journey.pk)
 
-    return render(request, 'add_locations_to_journey.html', {'journey': journey, 'locations': locations})
+    # Prepare data for Grid.js
+    location_data = [
+        {"name": location.name, "image": location.first_image() if location.first_image() else ""}
+        for location in locations
+    ]
+
+    return render(request, 'journey/change_locations_in_journey.html', {
+        'journey': journey,
+        'locations': locations,
+        'location_data': location_data
+    })
 
 
