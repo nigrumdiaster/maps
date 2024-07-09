@@ -23,6 +23,38 @@
       <label for="journeySong" class="form-label">Đường dẫn bài hát (link YouTube)</label>
       <input type="url" class="form-control" id="journeySong" name="journeySong" placeholder="Nhập đường dẫn bài hát" />
     </div>
+    <table id="example" class="table table-bordered nowrap table-striped align-middle" style="width:100%">
+      <thead>
+          <tr>
+              <th scope="col" style="width: 10px;">
+                  <div class="form-check">
+                      <input class="form-check-input fs-15" type="checkbox" id="checkAll" value="option">
+                  </div>
+              </th>
+              <th data-ordering="false">Tên</th>
+              <th data-ordering="false">Ảnh</th>
+              <th data-ordering="false">Địa Chỉ</th>
+              <th data-ordering="false">Tag</th>
+              <th data-ordering="false">Ngày Tạo</th>
+          </tr>
+      </thead>
+      <tbody>
+        {% for location in locations %}
+          <tr>
+              <th scope="row">
+                  <div class="form-check">
+                      <input class="form-check-input fs-15" type="checkbox" name="locations" value="{{ location.id }}">
+                  </div>
+              </th>
+              <td>{{ location.name }}</td>
+              <td><img src="{{ location.first_image }}" alt="" border="3" height="100" width="100" /></td>
+              <td>{{ location.address }}</td>
+              <td>{{ location.tags.all|join:', ' }}</td>
+              <td>{{ location.created_at|date:'F d, Y' }}</td>
+          </tr>
+          {% endfor %}
+      </tbody>
+    </table>
     <br /><br />
     <div class="text-end">
       <button type="submit" class="btn btn-primary">Thêm</button>
@@ -62,4 +94,17 @@
       })
     </script>
   {% endif %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<!--datatable js-->
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+
+<script src="{% static 'assets/js/pages/datatables.init.js' %}"></script>
 {% endblock %}
