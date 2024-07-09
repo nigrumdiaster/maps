@@ -1,6 +1,7 @@
 # library/views.py
 
 from urllib import request
+from django.db.models.query import QuerySet
 from django.urls import reverse_lazy
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, CreateView, TemplateView
@@ -8,6 +9,11 @@ from .models import Image, Video
 from django.core.paginator import Paginator
 from posts.models import Post
 from destination.models import LocationImage, Location
+
+# def image_gallery(request):
+#     images = Image.objects.all()
+#     image_urls = [image.image.url for image in images]
+#     return render(request, 'library/list_image.html', {'image_urls': image_urls})
 
 class ListImageView(ListView):
     model = Image
@@ -24,16 +30,6 @@ class AddImageView(CreateView):
     fields = ['title', 'image']
     template_name = 'library/add_image.html'
     success_url = reverse_lazy('list_image')
-
-# class ListVideoView(ListView):
-#     model = Video
-#     template_name = 'library/list_video.html'
-
-# class AddVideoView(CreateView):
-#     model = Video
-#     fields = ['title', 'video']
-#     template_name = 'library/add_video.html'
-#     success_url = reverse_lazy('list_video')
 
 class InheritImageView(TemplateView):
     template_name = 'library/inherit_image.html'
@@ -56,3 +52,20 @@ class InheritImageView(TemplateView):
     def get(self, request, *args, **kwargs):
         # Inherit images if they don't already exist
         self.inherit_images()
+        
+class ListVideoView(ListView):
+    model = Video
+    template_name = 'library/list_video.html'
+    context_object_name = 'videos'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return Video.objects.all().order_by('-create_at')
+
+class AddVideoView(CreateView):
+    model = Video
+    fields = ['title', 'video']
+    template_name = 'library/add_video.html'
+    success_url = reverse_lazy('list_video')
+
+
