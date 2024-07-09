@@ -11,3 +11,4 @@ library/migrations
 library/__pycache__
 journey/migrations
 journey/__pycache__
+templates/journey/add_locations_to_journey copy.html
