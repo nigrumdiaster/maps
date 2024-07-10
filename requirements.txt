@@ -9,3 +9,4 @@ unidecode
 requests
 django_select2
 beautifulsoup4
+pytube

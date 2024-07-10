@@ -12,7 +12,8 @@ class Image(models.Model):
 
 class Video(models.Model):
     title = models.CharField(max_length=255)
-    video = models.FileField(upload_to='library/videos/')
+    upload = models.FileField(upload_to='library/videos/', blank=True, null=True)
+    youtube_url = models.URLField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
