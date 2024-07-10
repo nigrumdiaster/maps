@@ -23,6 +23,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/css/lg-hash.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/css/lg-share.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/css/lg-rotate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/css/lg-video.min.css">
+
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     
     <!-- jsvectormap css -->
     <link href="{% static 'assets/libs/jsvectormap/css/jsvectormap.min.css' %}" rel="stylesheet" type="text/css" />
@@ -286,10 +289,10 @@
                       <div class="collapse menu-dropdown" id="sidebarProfile">
                         <ul class="nav nav-sm flex-column">
                           <li class="nav-item">
-                            <a href="pages-profile.html" class="nav-link" data-key="t-simple-page">Thêm mới</a>
+                            <a href="{% url 'add_video' %}" class="nav-link" data-key="t-simple-page">Thêm mới</a>
                           </li>
                           <li class="nav-item">
-                            <a href="pages-profile-settings.html" class="nav-link" data-key="t-settings">Danh sách</a>
+                            <a href="{% url 'list_video' %}" class="nav-link" data-key="t-settings">Danh sách</a>
                           </li>
                         </ul>
                       </div>
