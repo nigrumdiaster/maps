@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views import View
 from django.core.paginator import Paginator
-from destination.models import Location, LocationImage
+from destination.models import Location
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 

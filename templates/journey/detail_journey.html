@@ -5,46 +5,232 @@
 
 <div class="container-fluid">
     <div class="row">
-      <div class="col-lg-12">
-        <div class="card mt-n4 mx-n4 mb-n5">
-          <div class="bg-soft-warning">
-            <div class="card-body pb-4 mb-5">
-              <div class="row align-items-center">
-                <div class="col-md">
-                  <h4 class="fw-semibold" id="ticket-title">{{ journey.name }}</h4>
-                  <div class="hstack gap-3 flex-wrap">
-                    <div class="text-muted">
-                      <span id="ticket-client">{{ journey.tags.all|join:', ' }}</span>
+        <div class="col-lg-12">
+            <div class="card mt-n4 mx-n4 mb-n5">
+                <div class="bg-soft-warning">
+                    <div class="card-body pb-4 mb-5">
+                        <div class="row align-items-center">
+                            <div class="col-md">
+                                <h4 class="fw-semibold" id="ticket-title">{{ journey.name }}</h4>
+                                <div class="hstack gap-3 flex-wrap">
+                                    <div class="text-muted">
+                                        <span id="ticket-client">{{ journey.tags.all|join:', ' }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                  </div>
                 </div>
-              </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
 
     <div class="row">
-      <div class="col-xxl-9">
-        <div class="card">
-          <div class="card-body p-4">
-            <h6 class="fw-semibold text-uppercase mb-3">Mô Tả</h6>
-            <p class="text-muted">{{ journey.description }}</p>
-            <h6 class="fw-semibold text-uppercase mb-3">Hình Ảnh</h6>
-            <img style="height: 500px; width: 100%; object-fit: contain" src="{{ journey.image.url }}" class="d-block w-100" alt="Image for {{ journey.name }}"/>
-            <h6 class="fw-semibold text-uppercase mb-3">Âm Thanh</h6>
-            <audio controls>
-              <source src="{{ journey.sound.url }}" type="audio/mp4">
-            </audio>
-            <div class="row mt-3">
-              <div class="text-end">
-                <a href="{% url 'edit_journey' journey.id %}" class="btn btn-primary">Thay đổi điểm đến</a>
-              </div>
+        <div class="col-xxl-9">
+            <div class="card">
+                <div class="card-body p-4">
+                    <h6 class="fw-semibold text-uppercase mb-3">Mô Tả</h6>
+                    <p class="text-muted">{{ journey.description }}</p>
+                    <h6 class="fw-semibold text-uppercase mb-3">Hình Ảnh</h6>
+                    <img style="height: 500px; width: 100%; object-fit: contain" src="{{ journey.image.url }}" class="d-block w-100" alt="Image for {{ journey.name }}"/>
+                    <h6 class="fw-semibold text-uppercase mb-3">Danh Sách Điểm Đến</h6>
+                    <audio controls id="audio" hidden>
+                        <source src="{{ journey.sound.url }}" type="audio/mp4">
+                    </audio>
+                    <div class="table-responsive">
+                        <table class="table align-middle table-nowrap mb-0">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Tên</th>
+                                    <th scope="col">Ảnh</th>
+                                    <th scope="col">Địa Chỉ</th>
+                                    <th scope="col">Tag</th>
+                                    <th scope="col">Latitude</th>
+                                    <th scope="col">Longitude</th>
+                                    <th scope="col">Chi Tiết</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for location in locations %}
+                                    <tr>
+                                        <th scope="row">
+                                            <a href="#" class="fw-medium">{{ location.name }}</a>
+                                        </th>
+                                        <td><img src="{{ location.first_image }}" alt="" border="3" height="100" width="100" /></td>
+                                        <td>{{ location.address }}</td>
+                                        <td>{{ location.tags.all|join:', ' }}</td>
+                                        <td>{{ location.latitude }}</td>
+                                        <td>{{ location.longitude }}</td>
+                                        <td>
+                                            <a href="{% url 'detail_location' location.id %}" class="link-success">Chi Tiết <i class="ri-arrow-right-line align-middle"></i></a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="text-end">
+                            <a href="{% url 'edit_journey' journey.id %}" class="btn btn-primary">Thay đổi điểm đến</a>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+  <div class="col-xl-3 col-lg-4">
+    <div class="card">
+      <div class="card-header">
+        <div class="d-flex mb-3">
+          <div class="flex-grow-1">
+            <h5 class="fs-16" id="location-info"></h5>
+            <img id="location-image" src="" alt" " style="width: 100%; height: 200px; object-fit: contain" />
+            <p class="text-muted" id="location-description">{{ location.description }}</p>
           </div>
         </div>
       </div>
-    </div>
 
-{% endblock content%}
+
+    </div>
+    <!-- end card -->
+  </div>
+  <!-- end col -->
+
+  <div class="col-xl-9 col-lg-8">
+    <div>
+      <div class="card">
+          <div class="card-header border-0">
+              <div class="row g-4">
+                  <div class="col-sm-auto">
+                      <div>
+                          <h5 class="fs-16">Bản đồ</h5>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <div id="map" style="height: 500px; width: 100%;"></div>
+          <br>
+          <div>
+              <button id="startButton" class="btn btn-primary">Chạy</button>
+              <button id="pauseButton" class="btn btn-secondary">Tạm Dừng</button>
+              <button id="muteButton" class="btn btn-secondary">Tắt Âm Thanh</button>
+          </div>
+      </div>
+  </div>
+  </div>
+  <!-- end col -->
+</div>
+<br><br><br>
+<script>
+  var map = L.map('map').setView([14.0583, 108.2772], 6);
+
+  var googleStreets = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+      maxZoom: 20,
+      subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+  }).addTo(map);
+
+  var googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+      maxZoom: 20,
+      subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+  });
+
+  var baseMaps = {
+      'Street Map': googleStreets,
+      'Satellite': googleSat
+  };
+
+  L.control.layers(baseMaps).addTo(map);
+
+  var locations = JSON.parse('{{ locations_json|escapejs }}');
+  var currentLocationIndex = 0;
+  var interval;
+  var isPaused = false;
+  var audio = document.getElementById('audio');
+  var isMuted = false;
+
+  var markers = [];
+
+  locations.forEach(function (location) {
+      var customIcon = L.icon({
+          iconUrl: location.image,
+          iconSize: [64, 64],
+          iconAnchor: [32, 64],
+          popupAnchor: [0, -64]
+      });
+
+      var marker = L.marker([location.latitude, location.longitude], { icon: customIcon })
+          .bindPopup('<b>' + location.name + '</b><br>' + location.address);
+      
+      marker.on('click', function () {
+            // Update location information
+            document.getElementById('location-info').innerHTML = '<b>' + location.name + '</b><br>' + location.address;
+            document.getElementById('location-description').innerHTML = location.description ;
+            document.getElementById('location-image').src = location.image;
+            
+        });
+
+      markers.push(marker);
+      marker.addTo(map);
+  });
+
+  function moveToNextLocation() {
+      if (currentLocationIndex < locations.length && !isPaused) {
+          var location = locations[currentLocationIndex];
+          var marker = markers[currentLocationIndex];
+          map.flyTo([location.latitude, location.longitude], 19, { animate: true });
+          marker.openPopup();
+          // Update location information
+          document.getElementById('location-info').innerHTML = '<b>' + location.name + '</b><br>' + location.address;
+          document.getElementById('location-description').innerHTML = location.description ;
+          document.getElementById('location-image').src = location.image;
+
+          currentLocationIndex++;
+      } else {
+          clearInterval(interval);
+      }
+  }
+
+  document.getElementById('startButton').addEventListener('click', function () {
+      if (interval) {
+          clearInterval(interval);
+      }
+      currentLocationIndex = 0;  // Reset to the beginning
+      isPaused = false;
+      interval = setInterval(moveToNextLocation, 5000);
+      if (!isMuted) {
+          audio.currentTime = 0;  // Restart audio
+          audio.play();
+      }
+  });
+
+  document.getElementById('pauseButton').addEventListener('click', function () {
+      if (isPaused) {
+          // Resume the journey
+          isPaused = false;
+          interval = setInterval(moveToNextLocation, 5000);
+          if (!isMuted) {
+              audio.play();
+          }
+      } else {
+          // Pause the journey
+          isPaused = true;
+          clearInterval(interval);
+          audio.pause();
+      }
+  });
+
+  document.getElementById('muteButton').addEventListener('click', function () {
+      isMuted = !isMuted;
+      if (isMuted) {
+          audio.pause();
+      } else {
+          if (!isPaused) {
+              audio.play();
+          }
+      }
+  });
+</script>
+
+{% endblock content %}

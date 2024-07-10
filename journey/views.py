@@ -8,7 +8,8 @@ from destination.models import Location
 from .utils import YouTubeDownloader
 import os
 from django.core.files import File
-
+import json
+from django.core.serializers.json import DjangoJSONEncoder
 template_error = '404error.html'
 class Create_journey(View):
     template_name = 'journey/create_journey.html'
@@ -98,20 +99,37 @@ class Detail_journey(View):
     template_name = 'journey/detail_journey.html'
 
     def get(self, request, pk):
-        try:
+        # try:
             # Retrieve the journey object
             journey = get_object_or_404(Journey, pk=pk)
             locations = journey.locations.all()
+
+            locations_list = []
+            for location in locations:
+                image = location.images.first()
+                locations_list.append({
+                    'name': location.name,
+                    'description': location.description,
+                    'address': location.address,
+                    'latitude': location.latitude,
+                    'longitude': location.longitude,
+                    'image': image.images.url if image else None  # Assuming 'image' has a 'url' attribute
+                })
+
+
+
+
             data = {
+                'locations_json': json.dumps(locations_list, cls=DjangoJSONEncoder),
                 'locations': locations,
                 'journey': journey
             }
             # Render the template with journey 
-            return render(request, self.template_name, data)
-        
-        except Exception as e:
-            print(f"Error: {e}")
-            return render(request, template_error)
+            return render(request, self.template_name, data)    
+
+        # except Exception as e:
+        #     print(f"Error: {e}")
+        #     return render(request, template_error)
         
 
 def edit_journey(request, pk):
