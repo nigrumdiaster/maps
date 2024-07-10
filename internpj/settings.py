@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'library',
     'maps',
     'journey',
+    'search',
     'django.contrib.staticfiles',
     'taggit',
     'django_select2',
