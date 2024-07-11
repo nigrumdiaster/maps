@@ -1,0 +1,234 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header border-0">
+                <div class="row justify-content-center mb-4">
+                    <div class="col-lg-6">
+                        <form method="GET" action="{% url 'search' %}">
+                            <div class="row g-2">
+                                <div class="col">
+                                    <div class="position-relative mb-3">
+                                        <input type="text" name="searchQuery" class="form-control form-control-lg bg-light border-light" placeholder="Search here.." value="{{ request.GET.searchQuery }}">
+                                        <a class="btn btn-link link-success btn-lg position-absolute end-0 top-0" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample"><i class="ri-mic-fill"></i></a>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <button type="submit" class="btn btn-primary btn-lg waves-effect waves-light"><i class="mdi mdi-magnify me-1"></i> Search</button>
+                                </div> 
+                            </div>
+                        </form>
+                    </div>
+                    <!--end col-->
+                    {% if request.GET.searchQuery %}
+                    <div class="col-lg-12">
+                        <h5 class="fs-16 fw-semibold text-center mb-0">Showing results for "<span class="text-primary fw-medium fst-italic">{{ request.GET.searchQuery }}</span>"</h5>
+                    </div>
+                    {% endif %}
+                </div>
+                <!--end row-->
+
+                <div class="offcanvas offcanvas-top" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+                    <div class="offcanvas-body">
+                        <button type="button" class="btn-close text-reset float-end" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                        <div class="d-flex flex-column h-100 justify-content-center align-items-center">
+                            <div class="search-voice">
+                                <i class="ri-mic-fill align-middle"></i>
+                                <span class="voice-wave"></span>
+                                <span class="voice-wave"></span>
+                                <span class="voice-wave"></span>
+                            </div>
+                            <h4>Talk to me, what can I do for you?</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <ul class="nav nav-tabs nav-tabs-custom" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="tab" href="#all" role="tab" aria-selected="false">
+                            <i class="ri-search-2-line text-muted align-bottom me-1"></i> All Results
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" id="images-tab" href="#images" role="tab" aria-selected="true">
+                            <i class="ri-image-fill text-muted align-bottom me-1"></i> Images
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#news" role="tab" aria-selected="false">
+                            <i class="ri-list-unordered text-muted align-bottom me-1"></i> News
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#video" role="tab" aria-selected="false">
+                            <i class="ri-video-line text-muted align-bottom me-1"></i> Videos
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-body p-4">
+                <div class="tab-content text-muted">
+                    <div class="tab-pane active" id="all" role="tabpanel">
+                        <div class="row">
+                            {% for location in location_page_obj %}
+                                <div class="col-lg-6">
+                                    <div class="card border">
+                                        <div class="card-body">
+                                            <div class="d-sm-flex">
+                                                <div class="flex-shrink-0">
+                                                    <img src="{{location.first_image}}" alt="" width="115" height="100" class="rounded-1" />
+                                                </div>
+                                                <div class="flex-grow-1 ms-sm-4 mt-3 mt-sm-0" style="overflow: hidden">
+                                                    <ul class="list-inline mb-2">
+                                                        <li class="list-inline-item"><span class="badge badge-soft-success fs-11">{{ location.tags.all|join:', ' }}</span></li>
+                                                    </ul>
+                                                    <h5><a href="javascript:void(0);">{{location.name}}</a></h5>
+                                                    <ul class="list-inline mb-0">
+                                                        <li class="list-inline-item single-line-address"><i class="ri-user-3-fill text-success align-middle me-1"></i> {{location.address}}</li>
+                                                        <li class="list-inline-item"><i class="ri-calendar-2-fill text-success align-middle me-1"></i> {{ location.created_at|date:'F d, Y' }}</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--end card-->
+                                </div>
+                            <!--end col-->
+                            {%endfor%}
+                            
+                        </div>     
+                        <div>
+                            <ul class="pagination pagination-separated justify-content-center mb-0">
+                                {% if location_page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=1&searchQuery={{ searchQuery }}"><i class="mdi mdi-chevron-left"></i></a>
+                                </li>
+                                {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="javascript:void(0);"><i class="mdi mdi-chevron-left"></i></a>
+                                </li>
+                                {% endif %}
+                        
+                                {% for num in location_page_obj.paginator.page_range %}
+                                    {% if num == location_page_obj.number %}
+                                    <li class="page-item active">
+                                        <a class="page-link" href="?page={{ num }}&searchQuery={{ searchQuery }}">{{ num }}</a>
+                                    </li>
+                                    {% elif num > location_page_obj.number|add:'-3' and num < location_page_obj.number|add:'3' %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ num }}&searchQuery={{ searchQuery }}">{{ num }}</a>
+                                    </li>
+                                    {% endif %}
+                                {% endfor %}
+                        
+                                {% if location_page_obj.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ location_page_obj.paginator.num_pages }}&searchQuery={{ searchQuery }}"><i class="mdi mdi-chevron-right"></i></a>
+                                </li>
+                                {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="javascript:void(0);"><i class="mdi mdi-chevron-right"></i></a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                        
+                    </div>
+                    <div class="tab-pane" id="images" role="tabpanel">
+                        <div class="gallery-light">
+                            <div class="row">
+                                <div class="col-xl-3 col-lg-4 col-sm-6">
+                                    <div class="gallery-box card">
+                                        <div class="gallery-container">
+                                            <a class="image-popup" href="assets/images/small/img-1.jpg" title="">
+                                                <img class="gallery-img img-fluid mx-auto" src="assets/images/small/img-1.jpg" alt="" />
+                                                <div class="gallery-overlay">
+                                                    <h5 class="overlay-caption">Glasses and laptop from above</h5>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <div class="box-content">
+                                            <div class="d-flex align-items-center mt-2">
+                                                <div class="flex-grow-1 text-muted">by <a href="" class="text-body text-truncate">Ron Mackie</a></div>
+                                                <div class="flex-shrink-0">
+                                                    <div class="d-flex gap-3">
+                                                        <button type="button" class="btn btn-sm fs-12 btn-link text-body text-decoration-none px-0">
+                                                            <i class="ri-thumb-up-fill text-muted align-bottom me-1"></i> 2.2K
+                                                        </button>
+                                                        <button type="button" class="btn btn-sm fs-12 btn-link text-body text-decoration-none px-0">
+                                                            <i class="ri-question-answer-fill text-muted align-bottom me-1"></i> 1.3K
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--end col-->
+
+
+                            </div>
+                            <!--end row-->
+                            <div class="mt-4">
+                                <ul class="pagination pagination-separated justify-content-center mb-0">
+                                    <li class="page-item disabled">
+                                        <a href="javascript:void(0);" class="page-link"><i class="mdi mdi-chevron-left"></i></a>
+                                    </li>
+                                    <li class="page-item active">
+                                        <a href="javascript:void(0);" class="page-link">1</a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a href="javascript:void(0);" class="page-link">2</a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a href="javascript:void(0);" class="page-link">3</a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a href="javascript:void(0);" class="page-link">4</a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a href="javascript:void(0);" class="page-link">5</a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a href="javascript:void(0);" class="page-link"><i class="mdi mdi-chevron-right"></i></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--end tab-content-->
+
+            </div>
+            <!--end card-body-->
+        </div>
+        <!--end card -->
+    </div>
+    <!--end card -->
+</div>
+
+<style>
+    .single-line-address {
+        white-space: nowrap;
+        overflow: hidden; 
+        text-overflow: ellipsis; 
+        display: inline-block;
+        max-width: 100%; 
+    }
+</style>
+
+<!-- glightbox js -->
+<script src="{% static "assets/libs/glightbox/js/glightbox.min.js" %}"></script>
+
+<!-- swiper js -->
+<script src="{% static "assets/libs/swiper/swiper-bundle.min.js" %}"></script>
+
+<!-- search-result init js -->
+<script src="{% static "assets/js/pages/search-result.init.js" %}"></script>
+
+{% endblock content %}

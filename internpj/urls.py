@@ -26,6 +26,7 @@ urlpatterns = [
     path('posts/', include('posts.urls')),
     path('library/', include('library.urls')),
     path('journey/', include('journey.urls')),
+    path('search/', include('search.urls')),
     path('ckeditor/', include('ckeditor_uploader.urls')),
     path("select2/", include("django_select2.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

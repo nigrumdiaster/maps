@@ -52,6 +52,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'taggit',
     'django_select2',
+    'django.contrib.postgres',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -163,3 +165,4 @@ CKEDITOR_UPLOAD_PATH = "uploads/"
 SESSION_COOKIE_AGE = 300  # 5 mins
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+
