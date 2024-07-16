@@ -27,32 +27,32 @@ def search(request: HttpRequest) -> HttpResponse:
     location_page_number = request.GET.get('location_page')
     location_page_obj = location_paginator.get_page(location_page_number)
 
-    # # Pagination for images (12 per page)
-    # images_per_page = 12
-    # if search_query:
-    #     images = search_images(search_query).order_by('-created_at')
+    # Pagination for images (12 per page)
+    images_per_page = 12
+    if search_query:
+        images = search_images(search_query).order_by('-created_at')
             
-    # else:
-    #     images = Image.objects.all().order_by('-created_at')
-    # image_paginator = Paginator(images, images_per_page)
-    # image_page_number = request.GET.get('image_page')
-    # image_page_obj = image_paginator.get_page(image_page_number)
+    else:
+        images = Image.objects.all().order_by('-created_at')
+    image_paginator = Paginator(images, images_per_page)
+    image_page_number = request.GET.get('image_page')
+    image_page_obj = image_paginator.get_page(image_page_number)
 
-    # # Pagination for videos (4 per page)
-    # videos_per_page = 4
-    # if search_query:
-    #     videos = search_videos(search_query).order_by('-created_at')
-    # else:
-    #     videos = Video.objects.all().order_by('-created_at')
-    # video_paginator = Paginator(videos, videos_per_page)
-    # video_page_number = request.GET.get('video_page')
-    # video_page_obj = video_paginator.get_page(video_page_number)
+    # Pagination for videos (4 per page)
+    videos_per_page = 4
+    if search_query:
+        videos = search_videos(search_query).order_by('-created_at')
+    else:
+        videos = Video.objects.all().order_by('-created_at')
+    video_paginator = Paginator(videos, videos_per_page)
+    video_page_number = request.GET.get('video_page')
+    video_page_obj = video_paginator.get_page(video_page_number)
 
     data = {
         'location_page_obj': location_page_obj,
-        # 'image_page_obj': image_page_obj,
-        # 'video_page_obj': video_page_obj,
-        # 'search_query': search_query,
+        'image_page_obj': image_page_obj,
+        'video_page_obj': video_page_obj,
+        'search_query': search_query,
     }
 
     return render(request, template_name, data)

@@ -50,12 +50,12 @@
             <div>
                 <ul class="nav nav-tabs nav-tabs-custom" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active" data-bs-toggle="tab" href="#all" role="tab" aria-selected="false">
-                            <i class="ri-search-2-line text-muted align-bottom me-1"></i> All Results
+                        <a class="nav-link active" data-bs-toggle="tab" href="#all" role="tab" aria-selected="true">
+                            <i class="ri-search-2-line text-muted align-bottom me-1"></i> Điểm Đến
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" id="images-tab" href="#images" role="tab" aria-selected="true">
+                        <a class="nav-link" data-bs-toggle="tab" href="#images" role="tab" aria-selected="false">
                             <i class="ri-image-fill text-muted align-bottom me-1"></i> Images
                         </a>
                     </li>
@@ -87,7 +87,7 @@
                                                     <ul class="list-inline mb-2">
                                                         <li class="list-inline-item"><span class="badge badge-soft-success fs-11">{{ location.tags.all|join:', ' }}</span></li>
                                                     </ul>
-                                                    <h5><a href="javascript:void(0);">{{location.name}}</a></h5>
+                                                    <h5><a href="{% url 'detail_location' location.id %}">{{location.name}}</a></h5>
                                                     <ul class="list-inline mb-0">
                                                         <li class="list-inline-item single-line-address"><i class="ri-user-3-fill text-success align-middle me-1"></i> {{location.address}}</li>
                                                         <li class="list-inline-item"><i class="ri-calendar-2-fill text-success align-middle me-1"></i> {{ location.created_at|date:'F d, Y' }}</li>
@@ -100,105 +100,129 @@
                                 </div>
                             <!--end col-->
                             {%endfor%}
-                            
                         </div>     
                         <div>
                             <ul class="pagination pagination-separated justify-content-center mb-0">
+                                <!-- Previous page link -->
                                 {% if location_page_obj.has_previous %}
                                 <li class="page-item">
-                                    <a class="page-link" href="?page=1&searchQuery={{ searchQuery }}"><i class="mdi mdi-chevron-left"></i></a>
+                                    <a class="page-link" href="?location_page=1&searchQuery={{ search_query }}">
+                                        <i class="mdi mdi-chevron-left"></i>
+                                    </a>
                                 </li>
                                 {% else %}
                                 <li class="page-item disabled">
-                                    <a class="page-link" href="javascript:void(0);"><i class="mdi mdi-chevron-left"></i></a>
+                                    <span class="page-link"><i class="mdi mdi-chevron-left"></i></span>
                                 </li>
                                 {% endif %}
                         
+                                <!-- Page numbers -->
                                 {% for num in location_page_obj.paginator.page_range %}
                                     {% if num == location_page_obj.number %}
-                                    <li class="page-item active">
-                                        <a class="page-link" href="?page={{ num }}&searchQuery={{ searchQuery }}">{{ num }}</a>
+                                    <li class="page-item active" aria-current="page">
+                                        <span class="page-link">{{ num }}</span>
                                     </li>
                                     {% elif num > location_page_obj.number|add:'-3' and num < location_page_obj.number|add:'3' %}
                                     <li class="page-item">
-                                        <a class="page-link" href="?page={{ num }}&searchQuery={{ searchQuery }}">{{ num }}</a>
+                                        <a class="page-link" href="?location_page={{ num }}&searchQuery={{ search_query }}">{{ num }}</a>
                                     </li>
                                     {% endif %}
                                 {% endfor %}
                         
+                                <!-- Next page link -->
                                 {% if location_page_obj.has_next %}
                                 <li class="page-item">
-                                    <a class="page-link" href="?page={{ location_page_obj.paginator.num_pages }}&searchQuery={{ searchQuery }}"><i class="mdi mdi-chevron-right"></i></a>
+                                    <a class="page-link" href="?location_page={{ location_page_obj.paginator.num_pages }}&searchQuery={{ search_query }}">
+                                        <i class="mdi mdi-chevron-right"></i>
+                                    </a>
                                 </li>
                                 {% else %}
                                 <li class="page-item disabled">
-                                    <a class="page-link" href="javascript:void(0);"><i class="mdi mdi-chevron-right"></i></a>
+                                    <span class="page-link"><i class="mdi mdi-chevron-right"></i></span>
                                 </li>
                                 {% endif %}
                             </ul>
-                        </div>
-                        
+                        </div>                        
                     </div>
                     <div class="tab-pane" id="images" role="tabpanel">
-                        <div class="gallery-light">
+                        <div class="gallery-light"> 
                             <div class="row">
-                                <div class="col-xl-3 col-lg-4 col-sm-6">
-                                    <div class="gallery-box card">
-                                        <div class="gallery-container">
-                                            <a class="image-popup" href="assets/images/small/img-1.jpg" title="">
-                                                <img class="gallery-img img-fluid mx-auto" src="assets/images/small/img-1.jpg" alt="" />
-                                                <div class="gallery-overlay">
-                                                    <h5 class="overlay-caption">Glasses and laptop from above</h5>
-                                                </div>
-                                            </a>
-                                        </div>
-                                        <div class="box-content">
-                                            <div class="d-flex align-items-center mt-2">
-                                                <div class="flex-grow-1 text-muted">by <a href="" class="text-body text-truncate">Ron Mackie</a></div>
-                                                <div class="flex-shrink-0">
-                                                    <div class="d-flex gap-3">
-                                                        <button type="button" class="btn btn-sm fs-12 btn-link text-body text-decoration-none px-0">
-                                                            <i class="ri-thumb-up-fill text-muted align-bottom me-1"></i> 2.2K
-                                                        </button>
-                                                        <button type="button" class="btn btn-sm fs-12 btn-link text-body text-decoration-none px-0">
-                                                            <i class="ri-question-answer-fill text-muted align-bottom me-1"></i> 1.3K
-                                                        </button>
+                                {% for image in image_page_obj %}
+                                    <div class="col-xl-3 col-lg-4 col-sm-6">
+                                        
+                                        <div class="gallery-box card">
+                                            <div class="gallery-container">
+                                                <a class="image-popup" href="{{image.image.url}}" title="">
+                                                    <li class="crop">
+                                                        <img class="gallery-img img-fluid mx-auto" src="{{image.image.url}}" alt=""/>
+                                                    </li>
+                                                    
+                                                    <div class="gallery-overlay">
+                                                        <h5 class="overlay-caption">{{image.title}}</h5>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="box-content">
+                                                <div class="d-flex align-items-center mt-2">
+                                                    <div class="flex-grow-1 text-muted">by <a href="" class="text-body text-truncate">HQ</a></div>
+                                                    <div class="flex-shrink-0">
+                                                        <div class="d-flex gap-3">
+                                                            <a class="text-body text-truncate">{{ image.created_at }}</a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <!--end col-->
-
+                                    <!--end col-->
+                                {% endfor %}        
 
                             </div>
                             <!--end row-->
-                            <div class="mt-4">
+                            <div>
                                 <ul class="pagination pagination-separated justify-content-center mb-0">
+                                    <!-- Previous page link -->
+                                    {% if image_page_obj.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?image_page={{ image_page_obj.previous_page_number }}&searchQuery={{ request.GET.searchQuery }}#images">
+                                            <i class="mdi mdi-chevron-left"></i>
+                                        </a>
+                                    </li>
+                                    {% else %}
                                     <li class="page-item disabled">
-                                        <a href="javascript:void(0);" class="page-link"><i class="mdi mdi-chevron-left"></i></a>
+                                        <span class="page-link"><i class="mdi mdi-chevron-left"></i></span>
                                     </li>
-                                    <li class="page-item active">
-                                        <a href="javascript:void(0);" class="page-link">1</a>
-                                    </li>
+                                    {% endif %}
+
+                                    <!-- Page numbers -->
+                                    {% for num in image_page_obj.paginator.page_range %}
+                                    {% if num == image_page_obj.number %}
+                                        <li class="page-item active" aria-current="page">
+                                            <span class="page-link">{{ num }}</span>
+                                        </li>
+                                    {% elif num > image_page_obj.number|add:'-3' and num < image_page_obj.number|add:'3' %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?image_page={{ num }}&searchQuery={{ request.GET.searchQuery }}#images">{{ num }}</a>
+                                        </li>
+                                    {% endif %}
+                                    {% endfor %}
+
+                                    <!-- Next page link -->
+                                    {% if image_page_obj.has_next %}
                                     <li class="page-item">
-                                        <a href="javascript:void(0);" class="page-link">2</a>
+                                        <a class="page-link" href="?image_page={{ image_page_obj.next_page_number }}&searchQuery={{ request.GET.searchQuery }}#images">
+                                            <i class="mdi mdi-chevron-right"></i>
+                                        </a>
                                     </li>
-                                    <li class="page-item">
-                                        <a href="javascript:void(0);" class="page-link">3</a>
+                                    {% else %}
+                                    <li class="page-item disabled">
+                                        <span class="page-link"><i class="mdi mdi-chevron-right"></i></span>
                                     </li>
-                                    <li class="page-item">
-                                        <a href="javascript:void(0);" class="page-link">4</a>
-                                    </li>
-                                    <li class="page-item">
-                                        <a href="javascript:void(0);" class="page-link">5</a>
-                                    </li>
-                                    <li class="page-item">
-                                        <a href="javascript:void(0);" class="page-link"><i class="mdi mdi-chevron-right"></i></a>
-                                    </li>
+                                    {% endif %}
+
+
                                 </ul>
-                            </div>
+                            </div>     
                         </div>
                     </div>
                 </div>
@@ -220,6 +244,16 @@
         display: inline-block;
         max-width: 100%; 
     }
+    .crop {
+        height: 200px;
+        width: 400px;
+        overflow: hidden;
+        display: block
+       }
+    .crop img {
+        height: auto;
+        width: 400px;
+       }
 </style>
 
 <!-- glightbox js -->
@@ -230,5 +264,56 @@
 
 <!-- search-result init js -->
 <script src="{% static "assets/js/pages/search-result.init.js" %}"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Function to activate the correct tab based on URL hash
+        function activateTabFromHash() {
+            var hash = window.location.hash;
+            var tabTrigger = document.querySelector('.nav-tabs-custom .nav-link[href="' + hash + '"]');
+            
+            if (tabTrigger) {
+                // Deactivate all tabs
+                var tabLinks = document.querySelectorAll('.nav-tabs-custom .nav-link');
+                tabLinks.forEach(function(link) {
+                    link.classList.remove('active');
+                });
+                
+                // Activate the corresponding tab
+                tabTrigger.classList.add('active');
+                
+                // Deactivate all tab panes
+                var tabPanes = document.querySelectorAll('.tab-content .tab-pane');
+                tabPanes.forEach(function(pane) {
+                    pane.classList.remove('show', 'active');
+                });
+                
+                // Activate the corresponding tab pane
+                var tabPane = document.querySelector(hash);
+                tabPane.classList.add('show', 'active');
+            }
+        }
+    
+        // Activate tab on page load based on URL hash
+        activateTabFromHash();
+    
+        // Handle click events on tab links to update URL hash
+        var tabLinks = document.querySelectorAll('.nav-tabs-custom .nav-link');
+        
+        tabLinks.forEach(function(link) {
+            link.addEventListener('click', function(event) {
+                var href = this.getAttribute('href');
+                var hash = href.substring(href.indexOf('#'));
+                
+                // Update URL hash without triggering scroll
+                history.replaceState(null, null, hash);
+                
+                // Activate the clicked tab
+                activateTabFromHash();
+            });
+        });
+    });
+    </script>
+    
+    
 
 {% endblock content %}
