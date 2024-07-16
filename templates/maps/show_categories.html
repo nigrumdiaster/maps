@@ -18,7 +18,7 @@
               <table class="table align-middle table-nowrap mb-0">
                 
                 <tbody>
-                  {% for location in page_obj %}
+                  {% for location in locations %}
                     <tr>
                       <th scope="row">
                         <a href="{% url 'show_maps' %}?lat={{ location.latitude }}&lng={{ location.longitude }}&page={{ page_obj.number }}" class="fw-medium">{{ location.name }}</a>
@@ -29,35 +29,6 @@
               </table>
             </div>
             <br />
-            <div class="d-flex justify-content-end">
-              <div class="pagination-wrap hstack gap-2">
-                {% if page_obj.has_previous %}
-                  <a class="page-item pagination-prev" href="?page={{ page_obj.previous_page_number }}">Trước</a>
-                {% else %}
-                  <a class="page-item pagination-prev disabled" href="#">Trước</a>
-                {% endif %}
-
-                <ul class="pagination listjs-pagination mb-0">
-                  {% for num in page_obj.paginator.page_range %}
-                    {% if page_obj.number == num %}
-                      <li class="page-item active">
-                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-                      </li>
-                    {% else %}
-                      <li class="page-item">
-                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
-                      </li>
-                    {% endif %}
-                  {% endfor %}
-                </ul>
-
-                {% if page_obj.has_next %}
-                  <a class="page-item pagination-next" href="?page={{ page_obj.next_page_number }}">Sau</a>
-                {% else %}
-                  <a class="page-item pagination-next disabled" href="#">Sau</a>
-                {% endif %}
-              </div>
-            </div>
           </div>
         </div>
       </div>

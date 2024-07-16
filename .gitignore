@@ -13,3 +13,4 @@ journey/migrations
 journey/__pycache__
 search/migrations
 search/__pycache__
+scripttest.py

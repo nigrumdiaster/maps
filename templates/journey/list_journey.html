@@ -10,7 +10,9 @@
             <div class="col-md-4">
               <a href="{% url 'detail_journey' journey.id %}">
                 {% if journey.image %}
+                <li class="crop">
                   <img class="rounded-start img-fluid h-100 object-cover" src="{{ journey.image.url }}" alt="{{ journey.name }}" />
+                </li>
                 {% else %}
                   <img class="rounded-start img-fluid h-100 object-cover" src="{% static 'images/default.jpg' %}" alt="No Image" />
                 {% endif %}
@@ -70,4 +72,19 @@
     </div>
   </div>
   <br /><br /><br /><br /><br /><br />
+
+
+
+<style>
+    .crop {
+        height: 200px;
+        width: 200px;
+        overflow: hidden;
+        display: block
+       }
+    .crop img {
+        height: auto;
+        width: 200px;
+       }
+</style>
 {% endblock %}
