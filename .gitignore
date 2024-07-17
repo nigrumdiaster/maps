@@ -1,9 +1,10 @@
 internpj/.env
-destination/migrations
-posts/migrations
+internpj/__pycache__
+destination/__pycache__
+posts/__pycache__
 staticfiles
-maps/migrations
-library/migrations
-journey/migrations
-search/migrations
+maps/__pycache__
+library/__pycache__
+journey/__pycache__
+search/__pycache__
 scripttest.py
