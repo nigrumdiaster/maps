@@ -6,7 +6,7 @@ from django.utils import timezone
 from taggit.utils import parse_tags
 
 
-from .models import Location, LocationImage
+from .models import Location, LocationImage, Category
 from .utils import get_location_from_address
 
 
@@ -24,8 +24,12 @@ class Create_location(View):
     template_name = 'destination/create_location.html'
     
     def get(self, request):
+        categories = Category.objects.all()
+        data = {
+            'categories': categories
+        }
         # Display the form for creating a location
-        return render(request, self.template_name)
+        return render(request, self.template_name, data)
     @csrf_exempt
     def post(self, request):
         try:
@@ -34,11 +38,11 @@ class Create_location(View):
             location_tags = request.POST.get('locationTags')
             location_address = request.POST.get('locationAddress')
             uploaded_images = request.FILES.getlist('file')  
-            
+            location_categoryID = request.POST.get('categoryID')
             bing_maps_key = env("BING_MAP_KEY")
 
             location_latitude, location_longitude = get_location_from_address(location_address, bing_maps_key)
-
+            category = Category.objects.get(pk=location_categoryID)
           
 
             # Create a new Location object and save it
@@ -47,7 +51,8 @@ class Create_location(View):
                 description=location_description,
                 address=location_address,
                 latitude=location_latitude,
-                longitude=location_longitude
+                longitude=location_longitude,
+                category = category
             )
             new_location.save()
 
@@ -60,6 +65,15 @@ class Create_location(View):
             for image in uploaded_images:
                 new_image = LocationImage(location=new_location, images=image)
                 new_image.save()
+
+            # Process and save each uploaded image
+            for image in uploaded_images:
+                new_image = LocationImage(location=new_location, images=image)
+                new_image.save()
+
+
+            
+            
 
             # Prepare context for rendering the template
             success = {

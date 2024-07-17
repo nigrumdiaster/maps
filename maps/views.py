@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views import View
 from django.core.paginator import Paginator
-from destination.models import Location, LocationImage
+from destination.models import Category, Location
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 
@@ -40,3 +40,14 @@ class Show_maps(View):
         except Exception as e:
             print(f"Error: {e}")
             return render(request, template_error)
+        
+def Show_categories(request):
+    template_name = 'maps/show_categories.html'
+    categories = Category.objects.all()
+    data = {
+        "categories": categories
+    }
+    if request.method == "GET":
+        return render(request, template_name, data)
+    elif request.method == "POST":
+        return render(request, template_name, data)

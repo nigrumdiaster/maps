@@ -25,7 +25,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/css/lg-rotate.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/css/lg-video.min.css">
 
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    {% comment %} <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"> {% endcomment %}
     
     <!-- jsvectormap css -->
     <link href="{% static 'assets/libs/jsvectormap/css/jsvectormap.min.css' %}" rel="stylesheet" type="text/css" />
@@ -64,6 +64,9 @@
         height: 500px;
         width: 100%;
       }
+      img[src=""] {
+        display: none;
+      }
     </style>
     <!-- sweetalert2 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
@@ -75,10 +78,17 @@
     <link rel="stylesheet" type="text/css" href="{% static 'assets/libs/multi.js/multi.min.css' %}" />
     <!-- autocomplete css -->
     <link rel="stylesheet" href="{% static 'assets/libs/@tarekraafat/autocomplete.js/css/autoComplete.css' %}" />
-    <!-- Grid.js CSS -->
-    <link href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" rel="stylesheet" />
-    <!-- Grid.js JS -->
-    <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+
+    <!--datatable css-->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
+    <!--datatable responsive css-->
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap.min.css" />
+    
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
+    
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    {%block head%}
+    {%endblock head%}
   </head>
 
   <body>
@@ -233,6 +243,9 @@
                   <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                       <a href="{% url 'show_maps' %}" class="nav-link" data-key="t-analytics">Tổng hợp</a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="{% url 'show_categories' %}" class="nav-link" data-key="t-analytics">Danh mục</a>
                     </li>
                   </ul>
                 </div>

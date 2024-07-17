@@ -8,65 +8,75 @@ from destination.models import Location
 from .utils import YouTubeDownloader
 import os
 from django.core.files import File
-
+import json
+from django.core.serializers.json import DjangoJSONEncoder
 template_error = '404error.html'
 class Create_journey(View):
     template_name = 'journey/create_journey.html'
     
     def get(self, request):
+        locations = Location.objects.all()
+        data = {
+            'locations': locations,
+        }
         # Display the form for creating a journey
-        return render(request, self.template_name)
+        return render(request, self.template_name, data)
 
     @csrf_exempt
     def post(self, request):
-        journey_name = request.POST.get('journeyName')
-        journey_description = request.POST.get('journeyDescription')
-        journey_tags = request.POST.get('journeyTags')
-        journey_song = request.POST.get('journeySong')
-        uploaded_image = request.FILES.get('journeyImage')
+        try:
+            journey_name = request.POST.get('journeyName')
+            journey_description = request.POST.get('journeyDescription')
+            journey_tags = request.POST.get('journeyTags')
+            journey_song = request.POST.get('journeySong')
+            uploaded_image = request.FILES.get('journeyImage')
+            selected_location_ids = request.POST.getlist('locations')
+            selected_locations = Location.objects.filter(id__in=selected_location_ids)
+            
+            # Download the audio
+            downloader = YouTubeDownloader(journey_song)
+            audio_path = downloader.download_audio()
+            print(f"Downloaded audio file path: {audio_path}")
 
-        # Download the audio
-        downloader = YouTubeDownloader(journey_song)
-        audio_path = downloader.download_audio()
-        print(f"Downloaded audio file path: {audio_path}")
+                # Save the audio file using Django's File system
+            with open(audio_path, 'rb') as audio_file:
+                django_audio_file = File(audio_file)
 
-            # Save the audio file using Django's File system
-        with open(audio_path, 'rb') as audio_file:
-            django_audio_file = File(audio_file)
+                # Create a new Journey object
+                new_journey = Journey(
+                        name=journey_name,
+                        description=journey_description,
+                        image=uploaded_image
+                    )
+                new_journey.sound.save(os.path.basename(audio_path), django_audio_file)
 
-            # Create a new Journey object
-            new_journey = Journey(
-                    name=journey_name,
-                    description=journey_description,
-                    image=uploaded_image
-                )
-            new_journey.sound.save(os.path.basename(audio_path), django_audio_file)
+                    # Add tags to the new journey if provided
+                if journey_tags:
+                    tags = parse_tags(journey_tags)
+                    new_journey.tags.add(*tags)
+                    # Add locations to the new journey if provided
+                new_journey.locations.set(selected_locations)
+                # Save the new journey
+                new_journey.save()
 
-                # Add tags to the new journey if provided
-            if journey_tags:
-                tags = parse_tags(journey_tags)
-                new_journey.tags.add(*tags)
+                if os.path.exists(audio_path):
+                    os.remove(audio_path)
+                    print(f"Deleted audio file path: {audio_path}")
+                locations = Location.objects.all()
+                data = {
+                    'success': 'Tạo điểm đến thành công!',
+                    'locations': locations
+                }
 
-            # Save the new journey
-            new_journey.save()
-
-            if os.path.exists(audio_path):
-                os.remove(audio_path)
-                print(f"Deleted audio file path: {audio_path}")
-
-            success = {
-                'success': 'Tạo điểm đến thành công!'
-            }
-
-            # Redirect to a success page or the journey detail page
-            return render(request, self.template_name, success)
+                # Redirect to a success page or the journey detail page
+                return render(request, self.template_name, data)
         
-        # except Exception as e:
-        #     error = {
-        #         'error': 'Không tạo được điểm đến!'
-        #     }
-        #     print(f"Error: {e}")
-        #     return render(request, self.template_name, error)
+        except Exception as e:
+            error = {
+                'error': 'Không tạo được điểm đến!'
+            }
+            print(f"Error: {e}")
+            return render(request, self.template_name, error)
 class List_journey(View):
     template_name = 'journey/list_journey.html'
     def get(self, request):
@@ -89,19 +99,40 @@ class Detail_journey(View):
     template_name = 'journey/detail_journey.html'
 
     def get(self, request, pk):
-        try:
+        # try:
             # Retrieve the journey object
             journey = get_object_or_404(Journey, pk=pk)
+            locations = journey.locations.all()
 
+            locations_list = []
+            for location in locations:
+                image = location.images.first()
+                locations_list.append({
+                    'name': location.name,
+                    'description': location.description,
+                    'address': location.address,
+                    'latitude': location.latitude,
+                    'longitude': location.longitude,
+                    'image': image.images.url if image else None  # Assuming 'image' has a 'url' attribute
+                })
+
+
+
+
+            data = {
+                'locations_json': json.dumps(locations_list, cls=DjangoJSONEncoder),
+                'locations': locations,
+                'journey': journey
+            }
             # Render the template with journey 
-            return render(request, self.template_name, {'journey': journey})
-        
-        except Exception as e:
-            print(f"Error: {e}")
-            return render(request, template_error)
+            return render(request, self.template_name, data)    
+
+        # except Exception as e:
+        #     print(f"Error: {e}")
+        #     return render(request, template_error)
         
 
-def change_locations_in_journey(request, pk):
+def edit_journey(request, pk):
     journey = get_object_or_404(Journey, pk=pk)
     locations = Location.objects.all()
 
@@ -112,16 +143,11 @@ def change_locations_in_journey(request, pk):
         journey.save()
         return redirect('detail_journey', pk=journey.pk)
 
-    # Prepare data for Grid.js
-    location_data = [
-        {"name": location.name, "image": location.first_image() if location.first_image() else ""}
-        for location in locations
-    ]
-
-    return render(request, 'journey/change_locations_in_journey.html', {
+    data = {
         'journey': journey,
         'locations': locations,
-        'location_data': location_data
-    })
+    }
+
+    return render(request, 'journey/edit_journey.html', data)
 
 

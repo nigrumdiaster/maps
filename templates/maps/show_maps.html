@@ -3,7 +3,7 @@
 {% block content %}
   <div class="row">
     <div class="col-xl-3 col-lg-4">
-      <div class="card">
+      <div r style="height: 600px;" class="card">
         <div class="card-header">
           <div class="d-flex mb-3">
             <div class="flex-grow-1">
@@ -16,11 +16,7 @@
           <div class="live-preview">
             <div class="table-responsive">
               <table class="table align-middle table-nowrap mb-0">
-                <thead>
-                  <tr>
-                    <th scope="col">Tên</th>
-                  </tr>
-                </thead>
+                
                 <tbody>
                   {% for location in page_obj %}
                     <tr>
@@ -81,7 +77,7 @@
               </div>
             </div>
           </div>
-          <div id="map" style="height: 500px; width: 100%;"></div>
+          <div id="map" style="height: 540px; width: 100%;"></div>
         </div>
         <!-- end card -->
       </div>
@@ -91,53 +87,63 @@
 
   <script>
     // Initialize the map, setting the default view to Vietnam
-    var map = L.map('map').setView([14.0583, 108.2772], 6) // Coordinates of Vietnam with zoom level 6
+    var map = L.map('map').setView([14.0583, 108.2772], 6); // Coordinates of Vietnam with zoom level 6
     
     // Add Google Maps base layer
     var googleStreets = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
       maxZoom: 20,
       subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
-    }).addTo(map)
+    }).addTo(map);
     
     // Add Google Satellite base layer
     var googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
       maxZoom: 20,
       subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
-    })
+    });
     
     // Base maps object for layer control
     var baseMaps = {
       'Street Map': googleStreets,
-      Satellite: googleSat
-    }
+      'Satellite': googleSat
+    };
     
     // Add base maps control to the map
-    L.control.layers(baseMaps).addTo(map)
+    L.control.layers(baseMaps).addTo(map);
     
     // Get query parameters for latitude and longitude
-    const urlParams = new URLSearchParams(window.location.search)
-    const lat = parseFloat(urlParams.get('lat'))
-    const lng = parseFloat(urlParams.get('lng'))
-    
-    // If latitude and longitude are provided, fly to that location
-    if (!isNaN(lat) && !isNaN(lng)) {
-      map.setView([lat, lng], 19) // Fly to the specified location with zoom level 15
-    }
+    const urlParams = new URLSearchParams(window.location.search);
+    const lat = parseFloat(urlParams.get('lat'));
+    const lng = parseFloat(urlParams.get('lng'));
     
     // Locations data from Django view
-    var locations = JSON.parse('{{ locations_json|escapejs }}')
+    var locations = JSON.parse('{{ locations_json|escapejs }}');
+    
+    // Initialize an empty variable to store the marker to be opened
+    var markerToOpen = null;
     
     locations.forEach(function (location) {
       var customIcon = L.icon({
         iconUrl: location.image,
         iconSize: [64, 64], // Adjust icon size as needed
-        iconAnchor: [16, 32], // Position of the icon relative to marker's location
-        popupAnchor: [0, -32] // Position of the popup relative to marker's anchor
-      })
+        iconAnchor: [32, 64], // Position of the icon relative to marker's location
+        popupAnchor: [0, -64] // Position of the popup relative to marker's anchor
+      });
     
-      L.marker([location.latitude, location.longitude], { icon: customIcon })
+      var marker = L.marker([location.latitude, location.longitude], { icon: customIcon })
         .bindPopup('<b>' + location.name + '</b><br>' + location.address)
-        .addTo(map)
-    })
+        .addTo(map);
+      
+      // Check if this marker is the one to be opened
+      if (location.latitude === lat && location.longitude === lng) {
+        markerToOpen = marker;
+      }
+    });
+    
+    // If latitude and longitude are provided, fly to that location and open the popup
+    if (markerToOpen) {
+      map.setView([lat, lng], 19); // Fly to the specified location with zoom level 19
+      markerToOpen.openPopup(); // Open the popup for the marker
+    }
   </script>
+  
 {% endblock %}

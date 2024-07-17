@@ -10,3 +10,4 @@ requests
 django_select2
 beautifulsoup4
 pytube
+django_extensions
