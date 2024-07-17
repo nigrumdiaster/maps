@@ -64,16 +64,7 @@ class Create_location(View):
             # Process and save each uploaded image
             for image in uploaded_images:
                 new_image = LocationImage(location=new_location, images=image)
-                new_image.save()
-
-            # Process and save each uploaded image
-            for image in uploaded_images:
-                new_image = LocationImage(location=new_location, images=image)
-                new_image.save()
-
-
-            
-            
+                new_image.save()    
 
             # Prepare context for rendering the template
             success = {

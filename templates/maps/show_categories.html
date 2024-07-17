@@ -2,37 +2,41 @@
 {% load static %}
 {% block content %}
   <div class="row">
-    <div class="col-xl-3 col-lg-4">
-      <div r style="height: 600px;" class="card">
+    <div style="height: 580px;" class="col-xl-3 col-lg-4">
+      <div class="card">
         <div class="card-header">
           <div class="d-flex mb-3">
             <div class="flex-grow-1">
-              <h5 class="fs-16">Điểm đến</h5>
+              <h5 class="fs-16">Danh mục</h5>
             </div>
           </div>
         </div>
-
-        <div class="card-body">
-          <div class="live-preview">
-            <div class="table-responsive">
-              <table class="table align-middle table-nowrap mb-0">
-                
-                <tbody>
-                  {% for location in locations %}
-                    <tr>
-                      <th scope="row">
-                        <a href="{% url 'show_maps' %}?lat={{ location.latitude }}&lng={{ location.longitude }}&page={{ page_obj.number }}" class="fw-medium">{{ location.name }}</a>
-                      </th>
-                    </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
+      
+        <div class="accordion custom-accordionwithicon-plus" id="accordionWithplusicon">
+          {% for category in categories %}
+            <div class="form-check form-switch">
+              <input class="form-check-input category-checkbox" type="checkbox" role="switch" id="SwitchCheckCategory{{ forloop.counter }}" checked data-category-id="{{ forloop.counter }}">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="accordion-header-{{ forloop.counter }}">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse-{{ forloop.counter }}">
+                    {{ category.name }}
+                  </button>
+                </h2>
+                <div id="collapse-{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="accordion-header-{{ forloop.counter }}" data-bs-parent="#accordionWithplusicon">
+                  <div class="accordion-body">
+                    {% for location in category.locations.all %}
+                      <div class="form-check form-switch">
+                        <input class="form-check-input location-checkbox" type="checkbox" role="switch" id="SwitchCheck{{ forloop.counter }}" checked data-lat="{{ location.latitude }}" data-lng="{{ location.longitude }}" data-category-id="{{ forloop.parentloop.counter }}">
+                        <a href="#" class="fw-medium location-link" data-lat="{{ location.latitude }}" data-lng="{{ location.longitude }}">{{ location.name }}</a><br>
+                      </div>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
             </div>
-            <br />
-          </div>
+          {% endfor %}
         </div>
       </div>
-      <!-- end card -->
     </div>
     <!-- end col -->
 
@@ -48,13 +52,19 @@
               </div>
             </div>
           </div>
-          <div id="map" style="height: 540px; width: 100%;"></div>
+          <div id="map" style="height: 520px; width: 100%;"></div>
         </div>
         <!-- end card -->
       </div>
     </div>
     <!-- end col -->
   </div>
+
+  <!--jquery cdn-->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="{% static "assets/js/pages/select2.init.js" %}"></script>
+  <!-- prismjs plugin -->
+  <script src="{% static "assets/libs/prismjs/prism.js" %}"></script>
 
   <script>
     // Initialize the map, setting the default view to Vietnam
@@ -81,16 +91,9 @@
     // Add base maps control to the map
     L.control.layers(baseMaps).addTo(map);
     
-    // Get query parameters for latitude and longitude
-    const urlParams = new URLSearchParams(window.location.search);
-    const lat = parseFloat(urlParams.get('lat'));
-    const lng = parseFloat(urlParams.get('lng'));
-    
     // Locations data from Django view
     var locations = JSON.parse('{{ locations_json|escapejs }}');
-    
-    // Initialize an empty variable to store the marker to be opened
-    var markerToOpen = null;
+    var markers = {}; // Object to store markers with keys as "lat-lng" strings
     
     locations.forEach(function (location) {
       var customIcon = L.icon({
@@ -101,20 +104,86 @@
       });
     
       var marker = L.marker([location.latitude, location.longitude], { icon: customIcon })
-        .bindPopup('<b>' + location.name + '</b><br>' + location.address)
-        .addTo(map);
+        .bindPopup('<b>' + location.name + '</b><br>' + location.address);
       
-      // Check if this marker is the one to be opened
-      if (location.latitude === lat && location.longitude === lng) {
-        markerToOpen = marker;
+      markers[location.latitude + '-' + location.longitude] = marker; // Use "lat-lng" as the key
+    });
+
+    // Function to add markers to map
+    function addMarkersToMap() {
+      Object.values(markers).forEach(function(marker) {
+        marker.addTo(map);
+      });
+    }
+
+    // Function to remove markers from map
+    function removeMarkersFromMap() {
+      Object.values(markers).forEach(function(marker) {
+        map.removeLayer(marker);
+      });
+    }
+
+    // Initial load: Add markers to map
+    addMarkersToMap();
+
+    // Handle checkbox change event for locations
+    $('.location-checkbox').change(function() {
+      var isChecked = $(this).prop('checked');
+      var lat = parseFloat($(this).data('lat'));
+      var lng = parseFloat($(this).data('lng'));
+      var markerKey = lat + '-' + lng;
+
+      if (isChecked) {
+        markers[markerKey].addTo(map);
+      } else {
+        map.removeLayer(markers[markerKey]);
       }
     });
-    
-    // If latitude and longitude are provided, fly to that location and open the popup
-    if (markerToOpen) {
-      map.setView([lat, lng], 19); // Fly to the specified location with zoom level 19
-      markerToOpen.openPopup(); // Open the popup for the marker
-    }
+
+    // Handle checkbox change event for categories
+    $('.category-checkbox').change(function() {
+      var isChecked = $(this).prop('checked');
+      var categoryId = $(this).data('category-id');
+
+      $(`.location-checkbox[data-category-id=${categoryId}]`).each(function() {
+        var lat = parseFloat($(this).data('lat'));
+        var lng = parseFloat($(this).data('lng'));
+        var markerKey = lat + '-' + lng;
+
+        $(this).prop('checked', isChecked);
+
+        if (isChecked) {
+          markers[markerKey].addTo(map);
+        } else {
+          map.removeLayer(markers[markerKey]);
+        }
+      });
+    });
+
+    // Add click event to location name to fly to marker and open popup
+    $('.location-link').click(function(e) {
+      e.preventDefault();
+      
+      var checkbox = $(this).prev('.form-check-input');
+      var isChecked = checkbox.prop('checked');
+      
+      if (!isChecked) {
+        return; // Exit function if checkbox is not checked
+      }
+
+      var lat = parseFloat($(this).data('lat'));
+      var lng = parseFloat($(this).data('lng'));
+      var zoomLevel = 19;
+
+      // Fly to the specified location with zoom level
+      map.flyTo([lat, lng], zoomLevel);
+
+      // After flyTo completes, find and open popup for the marker
+      map.once('moveend', function() {
+        var markerKey = lat + '-' + lng;
+        markers[markerKey].openPopup();
+      });
+    });
+
   </script>
-  
 {% endblock %}

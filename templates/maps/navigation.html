@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="row">
+    <div style="height: 580px;" class="col-xl-3 col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex mb-3">
+                    <div class="flex-grow-1">
+                        <h5 class="fs-16">Chỉ đường</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="startlocationID" class="form-label">Điểm bắt đầu</label>
+                    <select class="form-control" id="startlocationID" name="startlocationID">
+                        <option disabled selected value> -- Chọn điểm đến -- </option>
+                        {% for category in categories %}
+                        <optgroup label="{{ category.name }}">
+                            {% for location in category.locations.all %}
+                            <option value="{{ location.id }}" data-lat="{{ location.latitude }}" data-lng="{{ location.longitude }}">{{ location.name }}</option>
+                            {% endfor %}
+                        </optgroup>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="endlocationID" class="form-label">Điểm kết thúc</label>
+                    <select class="form-control" id="endlocationID" name="endlocationID">
+                        <option disabled selected value> -- Chọn điểm kết thúc -- </option>
+                        {% for category in categories %}
+                        <optgroup label="{{ category.name }}">
+                            {% for location in category.locations.all %}
+                            <option value="{{ location.id }}" data-lat="{{ location.latitude }}" data-lng="{{ location.longitude }}">{{ location.name }}</option>
+                            {% endfor %}
+                        </optgroup>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="text-end">
+                    <button type="button" id="getDirections" class="btn btn-primary">Chỉ đường</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-9 col-lg-8">
+        <div>
+            <div class="card">
+                <div class="card-header border-0">
+                    <div class="row g-4">
+                        <div class="col-sm-auto">
+                            <div>
+                                <h5 class="fs-16">Bản đồ</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="map" style="height: 520px; width: 100%;"></div>
+            </div>
+            <!-- end card -->
+        </div>
+        <div>
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5 class="fs-16">Chi tiết lộ trình</h5>
+                </div>
+                <div class="card-body" id="directionsPanel">
+                    <!-- Directions will be displayed here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end col -->
+</div>
+
+<!--jquery cdn-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+<!-- prismjs plugin -->
+<script src="{% static "assets/libs/prismjs/prism.js" %}"></script>
+<!--select2 cdn-->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<!-- HERE Maps API -->
+<script src="https://js.api.here.com/v3/3.1/mapsjs-core.js" type="text/javascript" charset="utf-8"></script>
+<script src="https://js.api.here.com/v3/3.1/mapsjs-service.js" type="text/javascript" charset="utf-8"></script>
+
+<script src="{% static "assets/js/pages/select2.init.js" %}"></script>
+
+<script>
+    // Initialize the map, setting the default view to Vietnam
+    var map = L.map('map').setView([14.0583, 108.2772], 6); // Coordinates of Vietnam with zoom level 6
+
+    // Add Google Maps base layer
+    var googleStreets = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+    }).addTo(map);
+
+    // Add Google Satellite base layer
+    var googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+    });
+
+    // Base maps object for layer control
+    var baseMaps = {
+        'Street Map': googleStreets,
+        'Satellite': googleSat
+    };
+
+    // Add base maps control to the map
+    L.control.layers(baseMaps).addTo(map);
+
+    // Locations data from Django view
+    var locations = JSON.parse('{{ locations_json|escapejs }}');
+    var markers = {}; // Object to store markers with keys as "lat-lng" strings
+
+    locations.forEach(function(location) {
+        var customIcon = L.icon({
+            iconUrl: location.image,
+            iconSize: [64, 64], // Adjust icon size as needed
+            iconAnchor: [32, 64], // Position of the icon relative to marker's location
+            popupAnchor: [0, -64] // Position of the popup relative to marker's anchor
+        });
+
+        var marker = L.marker([location.latitude, location.longitude], {
+                icon: customIcon
+            })
+            .bindPopup('<b>' + location.name + '</b><br>' + location.address);
+
+        markers[location.latitude + '-' + location.longitude] = marker; // Use "lat-lng" as the key
+    });
+
+    // Function to add markers to map
+    function addMarkersToMap() {
+        Object.values(markers).forEach(function(marker) {
+            marker.addTo(map);
+        });
+    }
+
+    // Initial load: Add markers to map
+    addMarkersToMap();
+
+
+    // Handle get directions button click
+    $('#getDirections').click(function() {
+        var startLocation = $('#startlocationID').find(':selected');
+        var endLocation = $('#endlocationID').find(':selected');
+
+        var startLat = startLocation.data('lat');
+        var startLng = startLocation.data('lng');
+        var endLat = endLocation.data('lat');
+        var endLng = endLocation.data('lng');
+
+        // Call HERE Maps API for routing
+        var platform = new H.service.Platform({
+            'apikey': 'oT82SaZLap9u5XfivIYiySHMaiLDhMZX6QdwdEtrzwc'
+        });
+        var router = platform.getRoutingService(null, 8);
+
+        var routeRequestParams = {
+            routingMode: 'fast',
+            transportMode: 'car',
+            origin: `${startLat},${startLng}`, // Start point
+            destination: `${endLat},${endLng}`, // End point
+            return: 'polyline,turnByTurnActions,actions,instructions'
+        };
+
+        router.calculateRoute(routeRequestParams, onSuccess, onError);
+
+        function onSuccess(result) {
+            var route = result.routes[0];
+            var coordinates = [];
+            var directionsPanel = $('#directionsPanel');
+            directionsPanel.empty(); // Clear previous directions
+
+            route.sections.forEach((section) => {
+                let linestring = H.geo.LineString.fromFlexiblePolyline(section.polyline).getLatLngAltArray();
+
+                for (let i = 0; i < linestring.length; i += 3) {
+                    coordinates.push([linestring[i], linestring[i + 1]]);
+                }
+
+                // Display turn-by-turn instructions in Vietnamese
+                section.actions.forEach((action) => {
+                    var instruction = `<p>${action.instruction}</p>`;
+                    directionsPanel.append(instruction);
+                });
+            });
+
+            var routeLine = L.polyline(coordinates, {
+                color: 'blue',
+                weight: 3
+            }).addTo(map);
+
+            // Zoom map to fit route
+            map.fitBounds(routeLine.getBounds());
+        }
+
+        function onError(error) {
+            console.log('Error:', error);
+        }
+    });
+</script>
+{% endblock %}

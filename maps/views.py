@@ -43,11 +43,50 @@ class Show_maps(View):
         
 def Show_categories(request):
     template_name = 'maps/show_categories.html'
-    categories = Category.objects.all()
+    categories = Category.objects.prefetch_related('locations').all()
     data = {
         "categories": categories
     }
     if request.method == "GET":
+        locations = Location.objects.all()
+        locations_list = []
+        for location in locations:
+            image = location.images.first()
+            locations_list.append({
+                'name': location.name,
+                'address': location.address,
+                'latitude': location.latitude,
+                'longitude': location.longitude,
+                'image': image.images.url if image else None  # Assuming 'image' has a 'url' attribute
+            })
+        data = {
+            "categories": categories,
+            'locations_json': json.dumps(locations_list, cls=DjangoJSONEncoder),
+        }
         return render(request, template_name, data)
     elif request.method == "POST":
+        return render(request, template_name, data)
+
+def Navigation(request):
+    template_name = 'maps/navigation.html'
+    categories = Category.objects.prefetch_related('locations').all()
+    data = {
+        "categories": categories
+    }
+    if request.method == "GET":
+        locations = Location.objects.all()
+        locations_list = []
+        for location in locations:
+            image = location.images.first()
+            locations_list.append({
+                'name': location.name,
+                'address': location.address,
+                'latitude': location.latitude,
+                'longitude': location.longitude,
+                'image': image.images.url if image else None  # Assuming 'image' has a 'url' attribute
+            })
+        data = {
+            "categories": categories,
+            'locations_json': json.dumps(locations_list, cls=DjangoJSONEncoder),
+        }
         return render(request, template_name, data)
