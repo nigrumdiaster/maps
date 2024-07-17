@@ -68,9 +68,9 @@ class Create_location(View):
                 new_image.save()    
 
             # Process and save each uploaded image
-            for image in uploaded_images:
-                new_image = LocationImage(location=new_location, images=image)
-                new_image.save()
+            for image3D in uploaded_images3D:
+                new_image3D = LocationImage3D(location=new_location, images3D=image3D)
+                new_image3D.save()
 
 
             
