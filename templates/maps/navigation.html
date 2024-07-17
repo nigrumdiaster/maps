@@ -156,16 +156,18 @@
 
         // Call HERE Maps API for routing
         var platform = new H.service.Platform({
-            'apikey': 'oT82SaZLap9u5XfivIYiySHMaiLDhMZX6QdwdEtrzwc'
+            'apikey': '{{ here_map_api_key }}'
         });
         var router = platform.getRoutingService(null, 8);
 
         var routeRequestParams = {
             routingMode: 'fast',
+            lang: 'vi-VN',
             transportMode: 'car',
             origin: `${startLat},${startLng}`, // Start point
             destination: `${endLat},${endLng}`, // End point
             return: 'polyline,turnByTurnActions,actions,instructions'
+            
         };
 
         router.calculateRoute(routeRequestParams, onSuccess, onError);
