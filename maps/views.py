@@ -4,7 +4,12 @@ from django.core.paginator import Paginator
 from destination.models import Category, Location
 import json
 from django.core.serializers.json import DjangoJSONEncoder
+import os
+import environ
 
+
+env = environ.Env()
+environ.Env.read_env()
 
 template_error = '404error.html'
 
@@ -70,6 +75,7 @@ def Show_categories(request):
 def Navigation(request):
     template_name = 'maps/navigation.html'
     categories = Category.objects.prefetch_related('locations').all()
+    here_map_api_key = env("HERE_MAP_KEY")
     data = {
         "categories": categories
     }
@@ -86,6 +92,7 @@ def Navigation(request):
                 'image': image.images.url if image else None  # Assuming 'image' has a 'url' attribute
             })
         data = {
+            "here_map_api_key": here_map_api_key,
             "categories": categories,
             'locations_json': json.dumps(locations_list, cls=DjangoJSONEncoder),
         }
