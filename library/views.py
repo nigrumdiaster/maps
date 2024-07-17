@@ -73,15 +73,6 @@ class InheritImageView(TemplateView):
         # Inherit images if they don't already exist
         self.inherit_images()
 
-class ListVideoView(ListView):
-    model = Video
-    template_name = 'library/list_video.html'
-    context_object_name = 'videos'
-    paginate_by = 10
-
-    def get_queryset(self):
-        return Video.objects.all().order_by('-created_at')
-
 class AddVideoView(View):
     template_name = 'library/add_video.html'
     success_url = reverse_lazy('list_video')
@@ -107,8 +98,19 @@ class AddVideoView(View):
         if error:
             return render(request, self.template_name, {'error': error})
 
+        # Save the video
         video = Video(title=title, upload=upload, youtube_url=youtube_url)
         video.save()
-        return redirect(self.success_url)
 
+        # Return the success message
+        success = {'success': 'Thêm video thành công!'}
+        return render(request, self.template_name, success)
 
+class ListVideoView(ListView):
+    model = Video
+    template_name = 'library/list_video.html'
+    context_object_name = 'videos'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return Video.objects.all().order_by('-created_at')
