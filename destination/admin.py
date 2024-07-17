@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Location, LocationImage, Category
+from .models import Location, LocationImage, Category, LocationImage3D
 
 class LocationImageInline(admin.TabularInline):
     model = LocationImage
@@ -28,3 +28,8 @@ class LocationImageAdmin(admin.ModelAdmin):
     search_fields = ('location__name',)
 
 admin.site.register(Category)
+
+@admin.register(LocationImage3D)
+class LocationImage3DAdmin(admin.ModelAdmin):
+    list_display = ('location', 'images')
+    search_fields = ('location__name',)

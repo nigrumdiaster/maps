@@ -6,7 +6,7 @@ from django.utils import timezone
 from taggit.utils import parse_tags
 
 
-from .models import Location, LocationImage, Category
+from .models import Location, LocationImage, Category, LocationImage3D
 from .utils import get_location_from_address
 
 
@@ -38,6 +38,7 @@ class Create_location(View):
             location_tags = request.POST.get('locationTags')
             location_address = request.POST.get('locationAddress')
             uploaded_images = request.FILES.getlist('file')  
+            uploaded_images3D = request.FILES.getlist('file3D')
             location_categoryID = request.POST.get('categoryID')
             bing_maps_key = env("BING_MAP_KEY")
 
@@ -67,9 +68,9 @@ class Create_location(View):
                 new_image.save()
 
             # Process and save each uploaded image
-            for image in uploaded_images:
-                new_image = LocationImage(location=new_location, images=image)
-                new_image.save()
+            for image3D in uploaded_images3D:
+                new_image3D = LocationImage3D(location=new_location, images3D=image3D)
+                new_image3D.save()
 
 
             

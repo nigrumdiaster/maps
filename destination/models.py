@@ -44,4 +44,10 @@ class LocationImage(models.Model):
 
     def __str__(self):
         return self.location.name
+    
+class LocationImage3D(models.Model):
+    location = models.ForeignKey(Location, related_name='images3D', on_delete=models.CASCADE)
+    images3D = models.FileField(upload_to='images/location/3D')
 
+    def __str__(self):
+        return self.location.name

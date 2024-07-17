@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.db.models import Q
 from destination.models import Location
 from library.models import Image, Video
+from posts.models import Post
 from django.db.models import Q
 
 def search_locations(query):
@@ -15,14 +16,25 @@ def search_locations(query):
         locations = Location.objects.none()
     
     return locations
+def search_posts(query):
+    queries = query.split()
+    if queries:
+        combined_query = Q()
+        for q in queries:
+            combined_query |= Q(title__unaccent__icontains=q)  | Q(post_type__unaccent__icontains=q)
+        posts = Post.objects.filter(combined_query).distinct()
+    else:
+        posts = Post.objects.none()
+    return posts
+
 def search_images(query):
     queries = query
     if queries:
         images = Image.objects.filter(title__unaccent__icontains=queries).distinct()
     else:
         images = Image.objects.none()
-    
     return images
+
 def search_videos(query):
     queries = query
     if queries:

@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from destination.models import Location
 from library.models import Image, Video
+from posts.models import Post
 from django.views import View
-from .utils import search_locations, search_images, search_videos
+from .utils import search_locations, search_images, search_posts, search_videos
 from django.core.paginator import Paginator
 # Create your views here.
 
@@ -27,6 +28,16 @@ def search(request: HttpRequest) -> HttpResponse:
     location_page_number = request.GET.get('location_page')
     location_page_obj = location_paginator.get_page(location_page_number)
 
+    #Pagination for posts (10 per page)
+    posts_per_page = 10
+    if search_query:
+        posts = search_posts(search_query).order_by('-created_at')
+    else:
+        posts = Post.objects.all().order_by('-created_at')
+    post_paginator = Paginator(posts, posts_per_page)
+    post_page_number = request.GET.get('post_page')
+    post_page_obj = post_paginator.get_page(post_page_number)
+
     # Pagination for images (12 per page)
     images_per_page = 12
     if search_query:
@@ -50,6 +61,7 @@ def search(request: HttpRequest) -> HttpResponse:
 
     data = {
         'location_page_obj': location_page_obj,
+        'post_page_obj': post_page_obj,
         'image_page_obj': image_page_obj,
         'video_page_obj': video_page_obj,
         'search_query': search_query,
