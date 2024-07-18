@@ -144,6 +144,9 @@
     addMarkersToMap();
 
 
+   // Reference to the current route line
+    var currentRouteLine = null;
+
     // Handle get directions button click
     $('#getDirections').click(function() {
         var startLocation = $('#startlocationID').find(':selected');
@@ -153,6 +156,16 @@
         var startLng = startLocation.data('lng');
         var endLat = endLocation.data('lat');
         var endLng = endLocation.data('lng');
+
+        // Check if startLocation is the same as endLocation
+        if (startLat === endLat && startLng === endLng) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Lỗi...',
+                text: 'Điểm bắt đầu và điểm kết thúc không được giống nhau'
+            });
+            return; // Exit the function if locations are the same
+        }
 
         // Call HERE Maps API for routing
         var platform = new H.service.Platform({
@@ -167,7 +180,6 @@
             origin: `${startLat},${startLng}`, // Start point
             destination: `${endLat},${endLng}`, // End point
             return: 'polyline,turnByTurnActions,actions,instructions'
-            
         };
 
         router.calculateRoute(routeRequestParams, onSuccess, onError);
@@ -192,18 +204,25 @@
                 });
             });
 
-            var routeLine = L.polyline(coordinates, {
+            // Remove existing route line if it exists
+            if (currentRouteLine) {
+                map.removeLayer(currentRouteLine);
+            }
+
+            // Draw new route line
+            currentRouteLine = L.polyline(coordinates, {
                 color: 'blue',
                 weight: 3
             }).addTo(map);
 
             // Zoom map to fit route
-            map.fitBounds(routeLine.getBounds());
+            map.fitBounds(currentRouteLine.getBounds());
         }
 
         function onError(error) {
             console.log('Error:', error);
         }
     });
+
 </script>
 {% endblock %}
