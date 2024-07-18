@@ -1,6 +1,5 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load static %}
-
 {% block content %}
   <div class="row">
     {% for journey in page_obj %}
@@ -10,25 +9,35 @@
             <div class="col-md-4">
               <a href="{% url 'detail_journey' journey.id %}">
                 {% if journey.image %}
-                <li class="crop">
-                  <img class="rounded-start img-fluid h-100 object-cover" src="{{ journey.image.url }}" alt="{{ journey.name }}" />
-                </li>
+                  <li class="crop">
+                    <img class="rounded-start img-fluid h-100 object-cover"
+                         src="{{ journey.image.url }}"
+                         alt="{{ journey.name }}"
+                         width="auto"
+                         height="auto" />
+                  </li>
                 {% else %}
-                  <img class="rounded-start img-fluid h-100 object-cover" src="{% static 'images/default.jpg' %}" alt="No Image" />
+                  <img class="rounded-start img-fluid h-100 object-cover"
+                       src="{% static 'images/default.jpg' %}"
+                       alt="No Image"
+                       width="auto"
+                       height="auto" />
                 {% endif %}
               </a>
             </div>
             <div class="col-md-8">
               <div class="card-body">
-                <h5 class="card-title mb-2" style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; max-height: 3em; line-height: 1.5em; min-height: 3em;"><a href="{% url 'detail_journey' journey.id %}">{{ journey.name }}</a></h5>
-                <p class="card-text text-muted mb-0" style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; max-height: 3em; line-height: 1.5em; min-height: 3em;">{{ journey.description }}</p>
+                <h5 class="card-title mb-2 ellipsis">
+                  <a href="{% url 'detail_journey' journey.id %}">{{ journey.name }}</a>
+                </h5>
+                <p class="card-text text-muted mb-0 ellipsis">{{ journey.description }}</p>
               </div>
               <div class="card-footer">
                 <p class="card-text">
-                  <small class="text-muted"> </small>
+                  <small class="text-muted"></small>
                 </p>
                 <p class="card-text">
-                  <small class="text-muted"> </small>
+                  <small class="text-muted"></small>
                 </p>
                 <p class="card-text">
                   <small class="text-muted">Tag: {{ journey.tags.all|join:', ' }}</small>
@@ -45,11 +54,11 @@
   <div class="d-flex justify-content-end">
     <div class="pagination-wrap hstack gap-2">
       {% if page_obj.has_previous %}
-        <a class="page-item pagination-prev" href="?page={{ page_obj.previous_page_number }}">Trước</a>
+        <a class="page-item pagination-prev"
+           href="?page={{ page_obj.previous_page_number }}">Trước</a>
       {% else %}
         <a class="page-item pagination-prev disabled" href="#">Trước</a>
       {% endif %}
-
       <ul class="pagination listjs-pagination mb-0">
         {% for num in page_obj.paginator.page_range %}
           {% if page_obj.number == num %}
@@ -63,19 +72,21 @@
           {% endif %}
         {% endfor %}
       </ul>
-
       {% if page_obj.has_next %}
-        <a class="page-item pagination-next" href="?page={{ page_obj.next_page_number }}">Sau</a>
+        <a class="page-item pagination-next"
+           href="?page={{ page_obj.next_page_number }}">Sau</a>
       {% else %}
         <a class="page-item pagination-next disabled" href="#">Sau</a>
       {% endif %}
     </div>
   </div>
-  <br /><br /><br /><br /><br /><br />
-
-
-
-<style>
+  <br />
+  <br />
+  <br />
+  <br />
+  <br />
+  <br />
+  <style>
     .crop {
         height: 200px;
         width: 200px;
@@ -85,6 +96,16 @@
     .crop img {
         height: auto;
         width: 200px;
-       }
-</style>
-{% endblock %}
+      }
+    .ellipsis {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        max-height: 3em;
+        line-height: 1.5em;
+        min-height: 3em;
+      }
+  </style>
+{% endblock content %}

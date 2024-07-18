@@ -1,48 +1,63 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load static %}
-
 {% block content %}
-
-<div class="row">
-    <div class="col-lg-12">
-        <div class="card">
-            <div class="card-header border-0">
-                <div class="row justify-content-center mb-4">
-                    <div class="col-lg-6">
-                        <form method="GET" action="{% url 'search' %}">
-                            <div class="row g-2">
-                                <div class="col">
-                                    <div class="position-relative mb-3">
-                                        <input type="text" name="searchQuery" class="form-control form-control-lg bg-light border-light" placeholder="Search here.." value="{{ request.GET.searchQuery }}">
-                                        <a class="btn btn-link link-success btn-lg position-absolute end-0 top-0" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample"><i class="ri-mic-fill"></i></a>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header border-0">
+                    <div class="row justify-content-center mb-4">
+                        <div class="col-lg-6">
+                            <form method="get" action="{% url 'search' %}">
+                                <div class="row g-2">
+                                    <div class="col">
+                                        <div class="position-relative mb-3">
+                                            <input type="text"
+                                                   name="searchQuery"
+                                                   class="form-control form-control-lg bg-light border-light"
+                                                   placeholder="Search here.."
+                                                   value="{{ request.GET.searchQuery }}">
+                                            <a class="btn btn-link link-success btn-lg position-absolute end-0 top-0"
+                                               data-bs-toggle="offcanvas"
+                                               data-bs-target="#offcanvasExample"
+                                               aria-controls="offcanvasExample"><i class="ri-mic-fill"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <button type="submit" class="btn btn-primary btn-lg waves-effect waves-light">
+                                            <i class="mdi mdi-magnify me-1"></i> Search
+                                        </button>
                                     </div>
                                 </div>
-                                <div class="col-auto">
-                                    <button type="submit" class="btn btn-primary btn-lg waves-effect waves-light"><i class="mdi mdi-magnify me-1"></i> Search</button>
-                                </div> 
+                            </form>
+                        </div>
+                        <!--end col-->
+                        {% if request.GET.searchQuery %}
+                            <div class="col-lg-12">
+                                <h5 class="fs-16 fw-semibold text-center mb-0">
+                                    Showing results for "<span class="text-primary fw-medium fst-italic">{{ request.GET.searchQuery }}</span>"
+                                </h5>
                             </div>
-                        </form>
+                        {% endif %}
                     </div>
-                    <!--end col-->
-                    {% if request.GET.searchQuery %}
-                    <div class="col-lg-12">
-                        <h5 class="fs-16 fw-semibold text-center mb-0">Showing results for "<span class="text-primary fw-medium fst-italic">{{ request.GET.searchQuery }}</span>"</h5>
-                    </div>
-                    {% endif %}
-                </div>
-                <!--end row-->
-
-                <div class="offcanvas offcanvas-top" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
-                    <div class="offcanvas-body">
-                        <button type="button" class="btn-close text-reset float-end" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                        <div class="d-flex flex-column h-100 justify-content-center align-items-center">
-                            <div class="search-voice">
-                                <i class="ri-mic-fill align-middle"></i>
-                                <span class="voice-wave"></span>
-                                <span class="voice-wave"></span>
-                                <span class="voice-wave"></span>
+                    <!--end row-->
+                    <div class="offcanvas offcanvas-top"
+                         tabindex="-1"
+                         id="offcanvasExample"
+                         aria-labelledby="offcanvasExampleLabel">
+                        <div class="offcanvas-body">
+                            <button type="button"
+                                    class="btn-close text-reset float-end"
+                                    data-bs-dismiss="offcanvas"
+                                    aria-label="Close"></button>
+                            <div class="d-flex flex-column h-100 justify-content-center align-items-center">
+                                <div class="search-voice">
+                                    <i class="ri-mic-fill align-middle"></i>
+                                    <span class="voice-wave"></span>
+                                    <span class="voice-wave"></span>
+                                    <span class="voice-wave"></span>
+                                </div>
+                                <h4>Talk to me, what can I do for you?</h4>
                             </div>
-                            <h4>Talk to me, what can I do for you?</h4>
                         </div>
                     </div>
                 </div>
@@ -165,58 +180,78 @@
                                                 <div class="d-flex align-items-center mt-2">
                                                     <div class="flex-grow-1 text-muted">by <a href="" class="text-body text-truncate">HQ</a></div>
                                                     <div class="flex-shrink-0">
-                                                        <div class="d-flex gap-3">
-                                                            <a class="text-body text-truncate">{{ image.created_at }}</a>
-                                                        </div>
+                                                        <img src="{{ location.first_image }}"
+                                                             alt=""
+                                                             width="115"
+                                                             height="100"
+                                                             class="rounded-1" />
+                                                    </div>
+                                                    <div class="flex-grow-1 ms-sm-4 mt-3 mt-sm-0 flex-grow-container">
+                                                        <ul class="list-inline mb-2">
+                                                            <li class="list-inline-item">
+                                                                <span class="badge badge-soft-success fs-11">{{ location.tags.all|join:', ' }}</span>
+                                                            </li>
+                                                        </ul>
+                                                        <h5>
+                                                            <a href="{% url 'detail_location' location.id %}">{{ location.name }}</a>
+                                                        </h5>
+                                                        <ul class="list-inline mb-0">
+                                                            <li class="list-inline-item single-line-address">
+                                                                <i class="ri-user-3-fill text-success align-middle me-1"></i> {{ location.address }}
+                                                            </li>
+                                                            <li class="list-inline-item">
+                                                                <i class="ri-calendar-2-fill text-success align-middle me-1"></i> {{ location.created_at|date:'F d, Y' }}
+                                                            </li>
+                                                        </ul>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+                                        <!--end card-->
                                     </div>
                                     <!--end col-->
-                                {% endfor %}        
-
+                                {% endfor %}
                             </div>
-                            <!--end row-->
                             <div>
                                 <ul class="pagination pagination-separated justify-content-center mb-0">
                                     <!-- Previous page link -->
-                                    {% if image_page_obj.has_previous %}
-                                    <li class="page-item">
-                                        <a class="page-link" href="?image_page={{ image_page_obj.previous_page_number }}&searchQuery={{ request.GET.searchQuery }}#images">
-                                            <i class="mdi mdi-chevron-left"></i>
-                                        </a>
-                                    </li>
-                                    {% else %}
-                                    <li class="page-item disabled">
-                                        <span class="page-link"><i class="mdi mdi-chevron-left"></i></span>
-                                    </li>
-                                    {% endif %}
-
-                                    <!-- Page numbers -->
-                                    {% for num in image_page_obj.paginator.page_range %}
-                                    {% if num == image_page_obj.number %}
-                                        <li class="page-item active" aria-current="page">
-                                            <span class="page-link">{{ num }}</span>
-                                        </li>
-                                    {% elif num > image_page_obj.number|add:'-3' and num < image_page_obj.number|add:'3' %}
+                                    {% if location_page_obj.has_previous %}
                                         <li class="page-item">
-                                            <a class="page-link" href="?image_page={{ num }}&searchQuery={{ request.GET.searchQuery }}#images">{{ num }}</a>
+                                            <a class="page-link"
+                                               href="?location_page=1&searchQuery={{ search_query }}">
+                                                <i class="mdi mdi-chevron-left"></i>
+                                            </a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item disabled">
+                                            <span class="page-link"><i class="mdi mdi-chevron-left"></i></span>
                                         </li>
                                     {% endif %}
+                                    <!-- Page numbers -->
+                                    {% for num in location_page_obj.paginator.page_range %}
+                                        {% if num == location_page_obj.number %}
+                                            <li class="page-item active" aria-current="page">
+                                                <span class="page-link">{{ num }}</span>
+                                            </li>
+                                        {% elif num > location_page_obj.number|add:'-3' and num < location_page_obj.number|add:'3' %}
+                                            <li class="page-item">
+                                                <a class="page-link"
+                                                   href="?location_page={{ num }}&searchQuery={{ search_query }}">{{ num }}</a>
+                                            </li>
+                                        {% endif %}
                                     {% endfor %}
-
                                     <!-- Next page link -->
-                                    {% if image_page_obj.has_next %}
-                                    <li class="page-item">
-                                        <a class="page-link" href="?image_page={{ image_page_obj.next_page_number }}&searchQuery={{ request.GET.searchQuery }}#images">
-                                            <i class="mdi mdi-chevron-right"></i>
-                                        </a>
-                                    </li>
+                                    {% if location_page_obj.has_next %}
+                                        <li class="page-item">
+                                            <a class="page-link"
+                                               href="?location_page={{ location_page_obj.paginator.num_pages }}&searchQuery={{ search_query }}">
+                                                <i class="mdi mdi-chevron-right"></i>
+                                            </a>
+                                        </li>
                                     {% else %}
-                                    <li class="page-item disabled">
-                                        <span class="page-link"><i class="mdi mdi-chevron-right"></i></span>
-                                    </li>
+                                        <li class="page-item disabled">
+                                            <span class="page-link"><i class="mdi mdi-chevron-right"></i></span>
+                                        </li>
                                     {% endif %}
                                 </ul>
                             </div>   
@@ -369,6 +404,7 @@
                             </ul>
                         </div>
                     </div>
+                    <!--end tab-content-->
                 </div>
             </div>
         </div>
@@ -393,17 +429,18 @@
         height: auto;
         width: 400px;
        }
-</style>
-
-<!-- glightbox js -->
-<script src="{% static "assets/libs/glightbox/js/glightbox.min.js" %}"></script>
-
-<!-- swiper js -->
-<script src="{% static "assets/libs/swiper/swiper-bundle.min.js" %}"></script>
-
-<!-- search-result init js -->
-<script src="{% static "assets/js/pages/search-result.init.js" %}"></script>
-<script>
+    .flex-grow-container {
+        overflow: hidden;
+        }
+      
+    </style>
+    <!-- glightbox js -->
+    <script src="{% static "assets/libs/glightbox/js/glightbox.min.js" %}"></script>
+    <!-- swiper js -->
+    <script src="{% static "assets/libs/swiper/swiper-bundle.min.js" %}"></script>
+    <!-- search-result init js -->
+    <script src="{% static "assets/js/pages/search-result.init.js" %}"></script>
+    <script>
     document.addEventListener("DOMContentLoaded", function() {
         // Function to activate the correct tab based on URL hash
         function activateTabFromHash() {
@@ -451,6 +488,7 @@
             });
         });
     });
+
 </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/lightgallery.umd.min.js"></script>
@@ -481,5 +519,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 });
-</script>
-{% endblock %}
+    </script>
+{% endblock content %}
+

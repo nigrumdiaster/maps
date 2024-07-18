@@ -1,8 +1,8 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load static %}
 {% block content %}
   <div class="row">
-    <div style="height: 580px;" class="col-xl-3 col-lg-4">
+    <div class="col-xl-3 col-lg-4">
       <div class="card">
         <div class="card-header">
           <div class="d-flex mb-3">
@@ -11,23 +11,45 @@
             </div>
           </div>
         </div>
-      
-        <div class="accordion custom-accordionwithicon-plus" id="accordionWithplusicon">
+        <div class="accordion custom-accordionwithicon-plus"
+             id="accordionWithplusicon">
           {% for category in categories %}
             <div class="form-check form-switch">
-              <input class="form-check-input category-checkbox" type="checkbox" role="switch" id="SwitchCheckCategory{{ forloop.counter }}" checked data-category-id="{{ forloop.counter }}">
+              <input class="form-check-input category-checkbox"
+                     type="checkbox"
+                     role="switch"
+                     id="SwitchCheckCategory{{ forloop.counter }}"
+                     checked
+                     data-category-id="{{ forloop.counter }}">
               <div class="accordion-item">
                 <h2 class="accordion-header" id="accordion-header-{{ forloop.counter }}">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ forloop.counter }}" aria-expanded="true" aria-controls="collapse-{{ forloop.counter }}">
-                    {{ category.name }}
-                  </button>
+                  <button class="accordion-button collapsed"
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#collapse-{{ forloop.counter }}"
+                          aria-expanded="true"
+                          aria-controls="collapse-{{ forloop.counter }}">{{ category.name }}</button>
                 </h2>
-                <div id="collapse-{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="accordion-header-{{ forloop.counter }}" data-bs-parent="#accordionWithplusicon">
+                <div id="collapse-{{ forloop.counter }}"
+                     class="accordion-collapse collapse"
+                     aria-labelledby="accordion-header-{{ forloop.counter }}"
+                     data-bs-parent="#accordionWithplusicon">
                   <div class="accordion-body">
                     {% for location in category.locations.all %}
                       <div class="form-check form-switch">
-                        <input class="form-check-input location-checkbox" type="checkbox" role="switch" id="SwitchCheck{{ forloop.counter }}" checked data-lat="{{ location.latitude }}" data-lng="{{ location.longitude }}" data-category-id="{{ forloop.parentloop.counter }}">
-                        <a href="#" class="fw-medium location-link" data-lat="{{ location.latitude }}" data-lng="{{ location.longitude }}">{{ location.name }}</a><br>
+                        <input class="form-check-input location-checkbox"
+                               type="checkbox"
+                               role="switch"
+                               id="SwitchCheck{{ forloop.counter }}"
+                               checked
+                               data-lat="{{ location.latitude }}"
+                               data-lng="{{ location.longitude }}"
+                               data-category-id="{{ forloop.parentloop.counter }}">
+                        <a href="#"
+                           class="fw-medium location-link"
+                           data-lat="{{ location.latitude }}"
+                           data-lng="{{ location.longitude }}">{{ location.name }}</a>
+                        <br>
                       </div>
                     {% endfor %}
                   </div>
@@ -39,7 +61,6 @@
       </div>
     </div>
     <!-- end col -->
-
     <div class="col-xl-9 col-lg-8">
       <div>
         <div class="card">
@@ -52,20 +73,26 @@
               </div>
             </div>
           </div>
-          <div id="map" style="height: 520px; width: 100%;"></div>
+          <div id="map"></div>
         </div>
         <!-- end card -->
       </div>
     </div>
     <!-- end col -->
   </div>
-
+  <style>
+    #map {
+        height: 520px;
+        width: 100%;
+    }
+  </style>
   <!--jquery cdn-->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+          integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+          crossorigin="anonymous"></script>
   <script src="{% static "assets/js/pages/select2.init.js" %}"></script>
   <!-- prismjs plugin -->
   <script src="{% static "assets/libs/prismjs/prism.js" %}"></script>
-
   <script>
     // Initialize the map, setting the default view to Vietnam
     var map = L.map('map').setView([14.0583, 108.2772], 6); // Coordinates of Vietnam with zoom level 6
@@ -186,4 +213,4 @@
     });
 
   </script>
-{% endblock %}
+{% endblock content %}

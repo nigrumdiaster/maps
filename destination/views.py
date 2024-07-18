@@ -5,31 +5,28 @@ from django.core.paginator import Paginator
 from django.utils import timezone
 from taggit.utils import parse_tags
 
-
 from .models import Location, LocationImage, Category, LocationImage3D
+
 from .utils import get_location_from_address
-
-
-from pathlib import Path
 import environ
-import os
 
 
 env = environ.Env()
 environ.Env.read_env()
 
 
-template_error = '404error.html'
+template_error = "404error.html"
+
+
 class Create_location(View):
-    template_name = 'destination/create_location.html'
-    
+    template_name = "destination/create_location.html"
+
     def get(self, request):
         categories = Category.objects.all()
-        data = {
-            'categories': categories
-        }
+        data = {"categories": categories}
         # Display the form for creating a location
         return render(request, self.template_name, data)
+
     @csrf_exempt
     def post(self, request):
         try:
@@ -42,9 +39,10 @@ class Create_location(View):
             location_categoryID = request.POST.get('categoryID')
             bing_maps_key = env("BING_MAP_KEY")
 
-            location_latitude, location_longitude = get_location_from_address(location_address, bing_maps_key)
+            location_latitude, location_longitude = get_location_from_address(
+                location_address, bing_maps_key
+            )
             category = Category.objects.get(pk=location_categoryID)
-          
 
             # Create a new Location object and save it
             new_location = Location(
@@ -53,7 +51,7 @@ class Create_location(View):
                 address=location_address,
                 latitude=location_latitude,
                 longitude=location_longitude,
-                category = category
+                category=category,
             )
             new_location.save()
 
@@ -65,7 +63,7 @@ class Create_location(View):
             # Process and save each uploaded image
             for image in uploaded_images:
                 new_image = LocationImage(location=new_location, images=image)
-                new_image.save()    
+                new_image.save()
 
             # Process and save each uploaded image
             for image3D in uploaded_images3D:
@@ -77,41 +75,36 @@ class Create_location(View):
             
 
             # Prepare context for rendering the template
-            success = {
-                'success': 'Tạo điểm đến thành công!'
-            }
+            success = {"success": "Tạo điểm đến thành công!"}
             return render(request, self.template_name, success)
-        
+
         except Exception as e:
-            error = {
-                'error': 'Không tạo được điểm đến!'
-            }
+            error = {"error": "Không tạo được điểm đến!"}
             print(f"Error: {e}")
             return render(request, self.template_name, error)
+
+
 class List_location(View):
-    template_name = 'destination/list_location.html'
+    template_name = "destination/list_location.html"
+
     def get(self, request):
         try:
-            locations = Location.objects.all().order_by('-created_at')
+            locations = Location.objects.all().order_by("-created_at")
             paginator = Paginator(locations, 10)  # Show 10 locations per page
 
-            page_number = request.GET.get('page')
+            page_number = request.GET.get("page")
             page_obj = paginator.get_page(page_number)
-            data = {'page_obj': page_obj}
+            data = {"page_obj": page_obj}
 
             return render(request, self.template_name, data)
-    
+
         except Exception as e:
             print(f"Error: {e}")
             return render(request, template_error)
-        
-
-
-
 
 
 class Detail_location(View):
-    template_name = 'destination/detail_location.html'
+    template_name = "destination/detail_location.html"
 
     def get(self, request, pk):
         try:
@@ -119,19 +112,21 @@ class Detail_location(View):
             location = get_object_or_404(Location, pk=pk)
 
             # Check if 'last_visit' exists in the session and calculate time difference
-            last_visit_str = request.session.get('last_visit')
+            last_visit_str = request.session.get("last_visit")
             if last_visit_str:
-                last_visit = timezone.datetime.strptime(last_visit_str, '%Y-%m-%dT%H:%M:%S.%f%z')
+                last_visit = timezone.datetime.strptime(
+                    last_visit_str, "%Y-%m-%dT%H:%M:%S.%f%z"
+                )
                 time_difference = timezone.now() - last_visit
                 # If time difference is more than 5 minutes, increment view count
                 if time_difference.total_seconds() > 300:  # 300 seconds = 5 minutes
                     location.views += 1
                     location.save()
                     # Update last_visit time in session
-                    request.session['last_visit'] = timezone.now().isoformat()
+                    request.session["last_visit"] = timezone.now().isoformat()
             else:
                 # Set last_visit time in session
-                request.session['last_visit'] = timezone.now().isoformat()
+                request.session["last_visit"] = timezone.now().isoformat()
                 # Increment view count for the first visit
                 location.views += 1
                 location.save()
@@ -140,13 +135,10 @@ class Detail_location(View):
             images = location.images.all()
 
             # Render the template with location and images
-            return render(request, self.template_name, {'location': location, 'images': images})
-        
+            return render(
+                request, self.template_name, {"location": location, "images": images}
+            )
+
         except Exception as e:
             print(f"Error: {e}")
             return render(request, template_error)
-        
-
-
-
-

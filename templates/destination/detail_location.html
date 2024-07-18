@@ -1,6 +1,5 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load static %}
-
 {% block content %}
   <div class="container-fluid">
     <div class="row">
@@ -35,7 +34,6 @@
         </div>
       </div>
     </div>
-
     <div class="row">
       <div class="col-xxl-9">
         <div class="card">
@@ -43,35 +41,48 @@
             <h6 class="fw-semibold text-uppercase mb-3">Mô Tả</h6>
             <p class="text-muted">{{ location.description }}</p>
             <h6 class="fw-semibold text-uppercase mb-3">Hình Ảnh</h6>
-
             <!-- Carousel -->
-            <div id="carouselExampleInterval" class="carousel slide" data-bs-ride="carousel">
+            <div id="carouselExampleInterval"
+                 class="carousel slide"
+                 data-bs-ride="carousel">
               <div class="carousel-inner">
                 {% for image in images %}
-                  <div class="carousel-item {% if forloop.first %}active{% endif %}" data-bs-interval="10000">
-                    <img style="height: 500px; width: 100%; object-fit: contain" src="{{ image.images.url }}" class="d-block w-100" alt="Image for {{ location.name }}" />
+                  <div class="carousel-item {% if forloop.first %}active{% endif %}"
+                       data-bs-interval="10000">
+                    <img height="500px"
+                         width="100%"
+                         style="object-fit: contain"
+                         src="{{ image.images.url }}"
+                         class="d-block w-100"
+                         alt="Image for {{ location.name }}" />
                   </div>
                 {% endfor %}
               </div>
-              <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="prev">
+              <button class="carousel-control-prev"
+                      type="button"
+                      data-bs-target="#carouselExampleInterval"
+                      data-bs-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Previous</span>
               </button>
-              <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="next">
+              <button class="carousel-control-next"
+                      type="button"
+                      data-bs-target="#carouselExampleInterval"
+                      data-bs-slide="next">
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Next</span>
               </button>
             </div>
             <div class="row mt-3">
               <div class="text-end">
-                <a href="{% url 'show_maps' %}?lat={{ location.latitude }}&lng={{ location.longitude }}" class="btn btn-primary">Xem trên bản đồ</a>
+                <a href="{% url 'show_maps' %}?lat={{ location.latitude }}&lng={{ location.longitude }}"
+                   class="btn btn-primary">Xem trên bản đồ</a>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-
     <!-- Button to view on map -->
   </div>
-{% endblock %}
+{% endblock content %}
