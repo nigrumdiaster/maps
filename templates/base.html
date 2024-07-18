@@ -32,8 +32,8 @@
           href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/css/lg-autoplay.min.css">
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/css/lg-pager.min.css">
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/css/lg-hash.min.css">
+    {% comment %} <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/css/lg-hash.min.css"> {% endcomment %}
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.7.2/css/lg-share.min.css">
     <link rel="stylesheet"
@@ -85,8 +85,11 @@
           href="{% static 'assets/libs/gridjs/theme/mermaid.min.css' %}" />
     <!-- leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://leaflet.github.io/Leaflet.draw/src/leaflet.draw.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-providers"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.2/leaflet.draw.js"></script>
     <style>
       #map {
         height: 500px;
@@ -95,6 +98,7 @@
       img[src=""] {
         display: none;
       }
+      
     </style>
     <!-- sweetalert2 -->
     <link rel="stylesheet"
@@ -120,6 +124,7 @@
         href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css">
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
         rel="stylesheet" />
+  <script src="{% static "assets/dist/leaflet.motion.min.js" %}"></script>
 </head>
 <body>
   <!-- Begin page -->

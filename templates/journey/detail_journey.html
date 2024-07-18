@@ -37,7 +37,7 @@
                              alt="Image for {{ journey.name }}" />
                         <h6 class="fw-semibold text-uppercase mb-3">Danh Sách Điểm Đến</h6>
                         <audio controls id="audio" hidden>
-                            <source src="{{ journey.sound.url }}" type="audio/mp4">
+                            <source src="{{ journey.sound.url }}" type="audio/mp4" />
                         </audio>
                         <div class="table-responsive">
                             <table class="table align-middle table-nowrap mb-0">
@@ -94,11 +94,7 @@
                     <div class="d-flex mb-3">
                         <div class="flex-grow-1">
                             <h5 class="fs-16" id="location-info"></h5>
-                            <img id="location-image"
-                                 src=""
-                                 alt=""
-                                 width="100%"
-                                 height="200px">
+                            <img id="location-image" src="" alt="" width="100%" height="200px" />
                             <p class="text-muted" id="location-description">{{ location.description }}</p>
                         </div>
                     </div>
@@ -120,7 +116,7 @@
                         </div>
                     </div>
                     <div id="map" height="500px" width="100%"></div>
-                    <br>
+                    <br />
                     <div>
                         <button id="startButton" class="btn btn-primary">Chạy</button>
                         <button id="pauseButton" class="btn btn-secondary">Tạm Dừng</button>
@@ -131,121 +127,72 @@
         </div>
         <!-- end col -->
     </div>
-    <br>
-    <br>
-    <br>
+    <br />
+    <br />
+    <br />
     <style>
         #location-image {
-            object-fit: contain
+            object-fit: contain;
         }
     </style>
     <script>
-  var map = L.map('map').setView([14.0583, 108.2772], 6);
+    var map = L.map("map").setView([14.0583, 108.2772], 6);
 
-  var googleStreets = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
-      maxZoom: 20,
-      subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
-  }).addTo(map);
+    var googleStreets = L.tileLayer(
+        "http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}",
+        {
+        maxZoom: 20,
+        subdomains: ["mt0", "mt1", "mt2", "mt3"],
+        }
+    ).addTo(map);
 
-  var googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-      maxZoom: 20,
-      subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
-  });
+    var googleSat = L.tileLayer(
+        "http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
+        {
+        maxZoom: 20,
+        subdomains: ["mt0", "mt1", "mt2", "mt3"],
+        }
+    );
 
-  var baseMaps = {
-      'Street Map': googleStreets,
-      'Satellite': googleSat
-  };
+    var baseMaps = {
+        "Street Map": googleStreets,
+        Satellite: googleSat,
+    };
 
-  L.control.layers(baseMaps).addTo(map);
+    L.control.layers(baseMaps).addTo(map);
 
-  var locations = JSON.parse('{{ locations_json|escapejs }}');
-  var currentLocationIndex = 0;
-  var interval;
-  var isPaused = false;
-  var audio = document.getElementById('audio');
-  var isMuted = false;
+    var locations = JSON.parse("{{ locations_json|escapejs }}");
+    var currentLocationIndex = 0;
+    var interval;
+    var isPaused = false;
+    var audio = document.getElementById("audio");
+    var isMuted = false;
 
-  var markers = [];
+    var markers = [];
 
-  locations.forEach(function (location) {
-      var customIcon = L.icon({
-          iconUrl: location.image,
-          iconSize: [64, 64],
-          iconAnchor: [32, 64],
-          popupAnchor: [0, -64]
-      });
-
-      var marker = L.marker([location.latitude, location.longitude], { icon: customIcon })
-          .bindPopup('<b>' + location.name + '</b><br>' + location.address);
-      
-      marker.on('click', function () {
-            // Update location information
-            document.getElementById('location-info').innerHTML = '<b>' + location.name + '</b><br>' + location.address;
-            document.getElementById('location-description').innerHTML = location.description ;
-            document.getElementById('location-image').src = location.image;
-            
+    locations.forEach(function (location) {
+        var customIcon = L.icon({
+        iconUrl: location.image,
+        iconSize: [64, 64],
+        iconAnchor: [32, 64],
+        popupAnchor: [0, -64],
         });
 
-      markers.push(marker);
-      marker.addTo(map);
-  });
+        var marker = L.marker([location.latitude, location.longitude], {
+        icon: customIcon,
+        }).bindPopup("<b>" + location.name + "</b><br>" + location.address);
 
-  function moveToNextLocation() {
-      if (currentLocationIndex < locations.length && !isPaused) {
-          var location = locations[currentLocationIndex];
-          var marker = markers[currentLocationIndex];
-          map.flyTo([location.latitude, location.longitude], 19, { animate: true });
-          marker.openPopup();
-          // Update location information
-          document.getElementById('location-info').innerHTML = '<b>' + location.name + '</b><br>' + location.address;
-          document.getElementById('location-description').innerHTML = location.description ;
-          document.getElementById('location-image').src = location.image;
+        marker.on("click", function () {
+        // Update location information
+        document.getElementById("location-info").innerHTML =
+            "<b>" + location.name + "</b><br>" + location.address;
+        document.getElementById("location-description").innerHTML =
+            location.description;
+        document.getElementById("location-image").src = location.image;
+        });
 
-          currentLocationIndex++;
-      } else {
-          clearInterval(interval);
-      }
-  }
-
-  document.getElementById('startButton').addEventListener('click', function () {
-      if (interval) {
-          clearInterval(interval);
-      }
-      currentLocationIndex = 0;  // Reset to the beginning
-      isPaused = false;
-      interval = setInterval(moveToNextLocation, 5000);
-      if (!isMuted) {
-          audio.currentTime = 0;  // Restart audio
-          audio.play();
-      }
-  });
-
-  document.getElementById('pauseButton').addEventListener('click', function () {
-      if (isPaused) {
-          // Resume the journey
-          isPaused = false;
-          interval = setInterval(moveToNextLocation, 5000);
-          if (!isMuted) {
-              audio.play();
-          }
-      } else {
-          // Pause the journey
-          isPaused = true;
-          clearInterval(interval);
-          audio.pause();
-      }
-  });
-
-  document.getElementById('muteButton').addEventListener('click', function () {
-      isMuted = !isMuted;
-      if (isMuted) {
-          audio.pause();
-      } else {
-          if (!isPaused) {
-              audio.play();
-          }
-      }
-  });
+        markers.push(marker);
+        marker.addTo(map);
+    });
     </script>
 {% endblock content %}

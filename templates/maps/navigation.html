@@ -82,6 +82,11 @@
             height: 520px;
             width: 100%;
         }
+        .leaflet-div-icon {
+			background: transparent !important;
+			border: none !important;
+			color: black;
+		}
     </style>
     <!--jquery cdn-->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
@@ -221,13 +226,20 @@
             }
 
             // Draw new route line
-            currentRouteLine = L.polyline(coordinates, {
+            currentRouteLine = L.motion.polyline(coordinates, {
                 color: 'blue',
                 weight: 3
-            }).addTo(map);
+            }, {
+				easing: L.Motion.Ease.easeInOutQuart
+			}, {
+				removeOnEnd: true,
+				showMarker: true,
+				icon: L.divIcon({ html: "<i  class='fa fa-truck fa-2x fa-flip-horizontal' aria-hidden='true'></i>", iconSize: L.point(27.5, 24) })
+			}).motionDuration(9000).addTo(map);
 
             // Zoom map to fit route
             map.fitBounds(currentRouteLine.getBounds());
+            currentRouteLine.motionStart();
         }
 
         function onError(error) {
