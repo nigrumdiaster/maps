@@ -10,6 +10,11 @@ import os
 from django.core.files import File
 import json
 from django.core.serializers.json import DjangoJSONEncoder
+import environ
+
+env = environ.Env()
+environ.Env.read_env()
+
 
 template_error = "404error.html"
 
@@ -98,6 +103,7 @@ class List_journey(View):
 
 class Detail_journey(View):
     template_name = "journey/detail_journey.html"
+    here_map_api_key = env("HERE_MAP_KEY")
 
     def get(self, request, pk):
         # try:
@@ -125,6 +131,7 @@ class Detail_journey(View):
             "locations_json": json.dumps(locations_list, cls=DjangoJSONEncoder),
             "locations": locations,
             "journey": journey,
+            "here_map_api_key": self.here_map_api_key,
         }
         # Render the template with journey
         return render(request, self.template_name, data)

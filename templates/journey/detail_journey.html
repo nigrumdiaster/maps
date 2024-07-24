@@ -134,65 +134,191 @@
         #location-image {
             object-fit: contain;
         }
+        .leaflet-div-icon {
+			background: transparent !important;
+			border: none !important;
+			color: black;
+		}
     </style>
-    <script>
-    var map = L.map("map").setView([14.0583, 108.2772], 6);
-
-    var googleStreets = L.tileLayer(
-        "http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}",
-        {
-        maxZoom: 20,
-        subdomains: ["mt0", "mt1", "mt2", "mt3"],
-        }
-    ).addTo(map);
-
-    var googleSat = L.tileLayer(
-        "http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
-        {
-        maxZoom: 20,
-        subdomains: ["mt0", "mt1", "mt2", "mt3"],
-        }
-    );
-
-    var baseMaps = {
-        "Street Map": googleStreets,
-        Satellite: googleSat,
-    };
-
-    L.control.layers(baseMaps).addTo(map);
-
-    var locations = JSON.parse("{{ locations_json|escapejs }}");
-    var currentLocationIndex = 0;
-    var interval;
-    var isPaused = false;
-    var audio = document.getElementById("audio");
-    var isMuted = false;
-
-    var markers = [];
-
-    locations.forEach(function (location) {
-        var customIcon = L.icon({
-        iconUrl: location.image,
-        iconSize: [64, 64],
-        iconAnchor: [32, 64],
-        popupAnchor: [0, -64],
-        });
-
-        var marker = L.marker([location.latitude, location.longitude], {
-        icon: customIcon,
-        }).bindPopup("<b>" + location.name + "</b><br>" + location.address);
-
-        marker.on("click", function () {
-        // Update location information
-        document.getElementById("location-info").innerHTML =
-            "<b>" + location.name + "</b><br>" + location.address;
-        document.getElementById("location-description").innerHTML =
-            location.description;
-        document.getElementById("location-image").src = location.image;
-        });
-
-        markers.push(marker);
-        marker.addTo(map);
-    });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- HERE Maps API -->
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-core.js"
+            type="text/javascript"
+            charset="utf-8"></script>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-service.js"
+            type="text/javascript"
+            charset="utf-8"></script>
+   
+            <script>
+                // Initialize the map, setting the default view to Vietnam
+                var map = L.map('map').setView([14.0583, 108.2772], 6); // Coordinates of Vietnam with zoom level 6
+            
+                // Add Google Maps base layer
+                var googleStreets = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+                    maxZoom: 20,
+                    subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+                }).addTo(map);
+            
+                // Add Google Satellite base layer
+                var googleSat = L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+                    maxZoom: 20,
+                    subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+                });
+            
+                // Base maps object for layer control
+                var baseMaps = {
+                    'Street Map': googleStreets,
+                    'Satellite': googleSat
+                };
+            
+                // Add base maps control to the map
+                L.control.layers(baseMaps).addTo(map);
+            
+                // Locations data from Django view
+                var locations = JSON.parse('{{ locations_json|escapejs }}');
+                var markers = {}; // Object to store markers with keys as "lat-lng" strings
+            
+                locations.forEach(function(location) {
+                    var customIcon = L.icon({
+                        iconUrl: location.image,
+                        iconSize: [64, 64], // Adjust icon size as needed
+                        iconAnchor: [32, 64], // Position of the icon relative to marker's location
+                        popupAnchor: [0, -64] // Position of the popup relative to marker's anchor
+                    });
+            
+                    var marker = L.marker([location.latitude, location.longitude], {
+                            icon: customIcon
+                        })
+                        .bindPopup('<b>' + location.name + '</b><br>' + location.address);
+            
+                    // Add click event listener to update location information
+                    marker.on("click", function () {
+                        document.getElementById("location-info").innerHTML =
+                            "<b>" + location.name + "</b><br>" + location.address;
+                        document.getElementById("location-description").innerHTML =
+                            location.description;
+                        document.getElementById("location-image").src = location.image;
+                    });
+            
+                    markers[location.latitude + '-' + location.longitude] = marker; // Use "lat-lng" as the key
+                });
+            
+                // Function to add markers to map
+                function addMarkersToMap() {
+                    Object.values(markers).forEach(function(marker) {
+                        marker.addTo(map);
+                    });
+                }
+            
+                // Initial load: Add markers to map
+                addMarkersToMap();
+            
+                // Reference to the current route line
+                var currentRouteLine = null;
+                var currentIndex = 0; // Index for the current pair of points
+                var isDrawing = false; // Flag to avoid starting multiple intervals
+            
+                // Function to calculate route between two points
+                async function calculateAndDrawRoute(startLat, startLng, endLat, endLng) {
+                    var platform = new H.service.Platform({
+                        'apikey': '{{ here_map_api_key }}'
+                    });
+                    var router = platform.getRoutingService(null, 8);
+            
+                    var routeRequestParams = {
+                        routingMode: 'fast',
+                        lang: 'vi-VN',
+                        transportMode: 'car',
+                        origin: `${startLat},${startLng}`, // Start point
+                        destination: `${endLat},${endLng}`, // End point
+                        return: 'polyline'
+                    };
+            
+                    try {
+                        const result = await router.calculateRoute(routeRequestParams);
+                        var route = result.routes[0];
+                        var coordinates = [];
+            
+                        route.sections.forEach((section) => {
+                            let linestring = H.geo.LineString.fromFlexiblePolyline(section.polyline).getLatLngAltArray();
+            
+                            for (let i = 0; i < linestring.length; i += 3) {
+                                coordinates.push([linestring[i], linestring[i + 1]]);
+                            }
+                        });
+            
+                        // Remove existing route line if it exists
+                        if (currentRouteLine) {
+                            map.removeLayer(currentRouteLine);
+                        }
+            
+                        // Draw new route line
+                        currentRouteLine = L.motion.polyline(coordinates, {
+                            color: 'blue',
+                            weight: 3
+                        }, {
+                            easing: L.Motion.Ease.easeInOutQuart
+                        }, {
+                            removeOnEnd: true,
+                            showMarker: true,
+                            icon: L.divIcon({ html: "<i class='fa fa-truck fa-2x fa-flip-horizontal' aria-hidden='true'></i>", iconSize: L.point(27.5, 24) })
+                        }).motionDuration(9000).addTo(map);
+            
+                        // Zoom map to fit route
+                        map.fitBounds(currentRouteLine.getBounds());
+                        currentRouteLine.motionStart();
+                    } catch (error) {
+                        console.log('Error:', error);
+                    }
+                }
+            
+                // Handle start button click
+                $('#startButton').click(async function() {
+                    if (isDrawing) return; // Prevent starting multiple intervals
+                    isDrawing = true;
+            
+                    // Function to draw all routes sequentially
+                    async function drawAllRoutes() {
+                        while (currentIndex < locations.length - 1) {
+                            var startLocation = locations[currentIndex];
+                            var endLocation = locations[currentIndex + 1];
+                            
+                            var startLat = startLocation.latitude;
+                            var startLng = startLocation.longitude;
+                            var endLat = endLocation.latitude;
+                            var endLng = endLocation.longitude;
+            
+                            // Calculate and draw route between current and next location
+                            await calculateAndDrawRoute(startLat, startLng, endLat, endLng);
+            
+                            // Increment index for the next pair of locations
+                            currentIndex++;
+                            
+                            // Optional: Add a short delay between drawing routes
+                            await new Promise(resolve => setTimeout(resolve, 15000)); // 5 seconds delay
+                            
+                        }
+            
+                        map.flyTo([endLat, endLng], 19);
+                        
+            
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Hoàn thành',
+                            text: 'Đã vẽ tất cả các đoạn đường.'
+                        });
+            
+                        isDrawing = false;
+                    }
+            
+                    // Start drawing routes
+                    drawAllRoutes();
+                });
+            </script>
+            
+            
+    
+    
 {% endblock content %}

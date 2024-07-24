@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Location, LocationImage, Category
+from .models import Location, LocationImage, Category, PanoramicImage
 
 
 class LocationImageInline(admin.TabularInline):
@@ -32,3 +32,4 @@ class LocationImageAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Category)
+admin.site.register(PanoramicImage)

@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
 from django.utils import timezone
 from taggit.utils import parse_tags
-from .models import Location, LocationImage, Category
+from .models import Location, LocationImage, Category, PanoramicImage
 from .utils import get_location_from_address
 import environ
 
@@ -27,49 +27,56 @@ class Create_location(View):
 
     @csrf_exempt
     def post(self, request):
-        try:
-            location_name = request.POST.get("locationName")
-            location_description = request.POST.get("locationDescription")
-            location_tags = request.POST.get("locationTags")
-            location_address = request.POST.get("locationAddress")
-            uploaded_images = request.FILES.getlist("file")
-            location_categoryID = request.POST.get("categoryID")
-            bing_maps_key = env("BING_MAP_KEY")
+        # try:
+        location_name = request.POST.get("locationName")
+        location_description = request.POST.get("locationDescription")
+        location_tags = request.POST.get("locationTags")
+        location_address = request.POST.get("locationAddress")
+        uploaded_images = request.FILES.getlist("locationImages")
+        uploaded_paranomicimage = request.FILES["paranomicImage"]
+        location_categoryID = request.POST.get("categoryID")
+        bing_maps_key = env("BING_MAP_KEY")
 
-            location_latitude, location_longitude = get_location_from_address(
-                location_address, bing_maps_key
+        location_latitude, location_longitude = get_location_from_address(
+            location_address, bing_maps_key
+        )
+        category = Category.objects.get(pk=location_categoryID)
+
+        # Create a new Location object and save it
+        new_location = Location(
+            name=location_name,
+            description=location_description,
+            address=location_address,
+            latitude=location_latitude,
+            longitude=location_longitude,
+            category=category,
+        )
+        new_location.save()
+
+        # Add tags to the new location if provided
+        if location_tags:
+            tags = parse_tags(location_tags)
+            new_location.tags.add(*tags)
+
+        # Process and save each uploaded image
+        for image in uploaded_images:
+            new_image = LocationImage(location=new_location, images=image)
+            new_image.save()
+
+        if uploaded_paranomicimage:
+            new_paranomicimage = PanoramicImage(
+                location=new_location, paranomicimage=uploaded_paranomicimage
             )
-            category = Category.objects.get(pk=location_categoryID)
+            new_paranomicimage.save()
 
-            # Create a new Location object and save it
-            new_location = Location(
-                name=location_name,
-                description=location_description,
-                address=location_address,
-                latitude=location_latitude,
-                longitude=location_longitude,
-                category=category,
-            )
-            new_location.save()
+        # Prepare context for rendering the template
+        success = {"success": "Tạo điểm đến thành công!"}
+        return render(request, self.template_name, success)
 
-            # Add tags to the new location if provided
-            if location_tags:
-                tags = parse_tags(location_tags)
-                new_location.tags.add(*tags)
-
-            # Process and save each uploaded image
-            for image in uploaded_images:
-                new_image = LocationImage(location=new_location, images=image)
-                new_image.save()
-
-            # Prepare context for rendering the template
-            success = {"success": "Tạo điểm đến thành công!"}
-            return render(request, self.template_name, success)
-
-        except Exception as e:
-            error = {"error": "Không tạo được điểm đến!"}
-            print(f"Error: {e}")
-            return render(request, self.template_name, error)
+    # except Exception as e:
+    #     error = {"error": "Không tạo được điểm đến!"}
+    #     print(f"Error: {e}")
+    #     return render(request, self.template_name, error)
 
 
 class List_location(View):
@@ -95,7 +102,7 @@ class Detail_location(View):
     template_name = "destination/detail_location.html"
 
     def get(self, request, pk):
-        try:
+        # try:
             # Retrieve the location object
             location = get_object_or_404(Location, pk=pk)
 
@@ -121,12 +128,26 @@ class Detail_location(View):
 
             # Retrieve all related images
             images = location.images.all()
-
+            paranomicimage = location.paranomicimage.paranomicimage if hasattr(location, 'paranomicimage') else None
+            # if paranomicimage:
+            #     data = {
+            #         "location": location,
+            #         "images": images,
+            #         "paranomicimage": paranomicimage,
+            #     }
+            # else:
+            #     data = {
+            #         "location": location,
+            #         "images": images,
+            #     }
+            data = {
+                    "location": location,
+                    "images": images,
+                    "paranomicimage": paranomicimage,
+                }
             # Render the template with location and images
-            return render(
-                request, self.template_name, {"location": location, "images": images}
-            )
+            return render(request, self.template_name, data)
 
-        except Exception as e:
-            print(f"Error: {e}")
-            return render(request, template_error)
+        # except Exception as e:
+        #     print(f"Error: {e}")
+        #     return render(request, template_error)

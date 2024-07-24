@@ -60,3 +60,28 @@ class LocationImage(models.Model):
 
     def __str__(self):
         return self.location.name
+
+
+def get_360image_upload_path(instance, filename):
+    # Encode the filename using a hash function
+    filename_base, filename_ext = os.path.splitext(filename)
+    encoded_filename = hashlib.md5(
+        (filename_base + datetime.datetime.now().isoformat()).encode("utf-8")
+    ).hexdigest()
+
+    # Convert location name to a suitable folder name
+    location_name = unidecode(instance.location.name).replace(" ", "_")
+
+    return "paranomicimage/location/{}/{}{}".format(
+        location_name, encoded_filename, filename_ext
+    )
+
+
+class PanoramicImage(models.Model):
+    location = models.OneToOneField(
+        Location, related_name="paranomicimage", on_delete=models.CASCADE
+    )
+    paranomicimage = models.FileField(upload_to=get_360image_upload_path)
+
+    def __str__(self):
+        return self.location.name
